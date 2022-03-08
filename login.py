@@ -19,8 +19,8 @@ def logintodb(user, passw):
 	# user
 	if passw:
 		db = mysql.connector.connect(host ="localhost",
-									user = user,
-									password = passw,
+									user = "comp440",
+									password = "pass1234",
 									db ="COMP440_Project")
 		cursor = db.cursor()
 
