@@ -12,9 +12,7 @@ my_username = "root"
 my_password = "root"
 database = "comp440_p1"
 
-
 def confirm_password(username, passwd):
-
     try:
         # Connect to database
         db = mysql.connector.connect(
@@ -79,7 +77,6 @@ def login():
         else:
             flash("Login Failed!")
 
-
     return render_template("login.html")
 
 
@@ -103,7 +100,9 @@ def initialize_database():
         mycursor = db.cursor()
 
         try:
+            # query_initialize_database = "DROP TABLE users; CREATE TABLE `comp440_p1`.`users` (`username` VARCHAR(60) NOT NULL,`password` VARCHAR(60) NOT NULL,`firstName` VARCHAR(60) NOT NULL,`lastName` VARCHAR(60) NOT NULL,`email` VARCHAR(60) NOT NULL, PRIMARY KEY (`username`), UNIQUE INDEX `email_UNIQUE` (`email` ASC)); INSERT INTO users (username, password, firstName, lastName, email) VALUES (\"comp440\", \"pass1234\", \"comp440FirstName\", \"comp440LastName\", \"comp440@gmail.com\");"
             query_initialize_database = "CREATE TABLE `comp440_p1`.`users` (`username` VARCHAR(60) NOT NULL,`password` VARCHAR(60) NOT NULL,`firstName` VARCHAR(60) NOT NULL,`lastName` VARCHAR(60) NOT NULL,`email` VARCHAR(60) NOT NULL, PRIMARY KEY (`username`), UNIQUE INDEX `email_UNIQUE` (`email` ASC)); INSERT INTO users (username, password, firstName, lastName, email) VALUES (\"comp440\", \"pass1234\", \"comp440FirstName\", \"comp440LastName\", \"comp440@gmail.com\");"
+
             mycursor.execute(query_initialize_database)
             
         except mysql.connector.Error as err:
