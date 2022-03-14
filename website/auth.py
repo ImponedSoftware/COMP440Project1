@@ -11,38 +11,6 @@ my_host = "localhost"
 my_username = "root"
 my_password = "root"
 database = "comp440_p1"
-db = any
-
-
-def insert_user_into_db(username, password, firstName, lastName, email):
-    try:
-        # Connect to database
-        db = mysql.connector.connect(
-            host=my_host,
-            username=my_username,
-            password=my_password,
-            db=database
-        )
-
-        # Get cursor to start querying database
-        mycursor = db.cursor()
-
-        try:
-            query_insert_user = "INSERT INTO users (username, password, firstName, lastName, email) " + "VALUES ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + email  + "');"
-            mycursor.execute(query_insert_user)
-            flash('Account successfully created!', category='success')
-
-        except mysql.connector.Error as err:
-            flash(err)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            flash("Error with username or password")
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            flash("Database does not exist")
-        else:
-            flash(err)
-    else:
-        db.close()
 
 
 def confirm_password(username, passwd):
@@ -119,6 +87,65 @@ def login():
 @auth.route('/logout')
 def logout():
     return "<p>Logout</p>"
+
+@auth.route('/initialize_database')
+def initialize_database():
+    try:
+        # Connect to database
+        db = mysql.connector.connect(
+            host=my_host,
+            username=my_username,
+            password=my_password,
+            db=database
+        )
+
+        # Get cursor to start querying database
+        mycursor = db.cursor()
+
+        try:
+            query_initialize_database = "CREATE TABLE `comp440_p1`.`users` (`username` VARCHAR(60) NOT NULL,`password` VARCHAR(60) NOT NULL,`firstName` VARCHAR(60) NOT NULL,`lastName` VARCHAR(60) NOT NULL,`email` VARCHAR(60) NOT NULL, PRIMARY KEY (`username`), UNIQUE INDEX `email_UNIQUE` (`email` ASC)); INSERT INTO users (username, password, firstName, lastName, email) VALUES (\"comp440\", \"pass1234\", \"comp440FirstName\", \"comp440LastName\", \"comp440@gmail.com\");"
+            mycursor.execute(query_initialize_database)
+            
+        except mysql.connector.Error as err:
+            return "<h1>Error</h1>"
+    except mysql.connector.Error as err:
+        return "<h1>Error</h1>"
+    else:
+        db.close()
+        return "<h1>Database Initiated</h1>"
+
+    
+
+
+def insert_user_into_db(username, password, firstName, lastName, email):
+    try:
+        # Connect to database
+        db = mysql.connector.connect(
+            host=my_host,
+            username=my_username,
+            password=my_password,
+            db=database
+        )
+
+        # Get cursor to start querying database
+        mycursor = db.cursor()
+
+        try:
+            query_insert_user = "INSERT INTO users (username, password, firstName, lastName, email) " + "VALUES ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + email  + "');"
+            mycursor.execute(query_insert_user)
+            flash('Account successfully created!', category='success')
+
+        except mysql.connector.Error as err:
+            flash(err)
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            flash("Error with username or password")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            flash("Database does not exist")
+        else:
+            flash(err)
+    else:
+        db.close()
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
