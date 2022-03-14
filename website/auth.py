@@ -1,4 +1,5 @@
 import mysql.connector
+import re
 from mysql.connector import errorcode
 from flask import Blueprint, render_template, request, flash
 
@@ -26,29 +27,31 @@ def confirm_password(username, passwd):
         mycursor = db.cursor()
 
         try:
-            # Query to database
-            query_get_password = "SELECT password FROM users WHERE username='" + username + "'"
+            if(isValidInput(username)): 
+                # Query to database 
 
-            try:
-                # Execute query on database
-                mycursor.execute(query_get_password)
+                query_get_password = "SELECT password FROM users WHERE username='" + username + "'"
 
-                password_from_db = ""
+                try:
+                    # Execute query on database
+                    mycursor.execute(query_get_password)
 
-                # Data from query is stored in my cursor as a tuple
-                for password in mycursor:
-                    # Convert tuple returned by mycursor into a string to get password as a string
-                    password_from_db = "".join(password)
-                    print(password_from_db)
+                    password_from_db = ""
 
-                # Check if password as parameter matches the password from the database
-                if password_from_db == passwd:
-                    db.close()
-                    return True
-                else:
-                    return False
-            except mysql.connector.Error as err:
-                print(err)
+                    # Data from query is stored in my cursor as a tuple
+                    for password in mycursor:
+                        # Convert tuple returned by mycursor into a string to get password as a string
+                        password_from_db = "".join(password)
+                        print(password_from_db)
+
+                    # Check if password as parameter matches the password from the database
+                    if password_from_db == passwd:
+                        db.close()
+                        return True
+                    else:
+                        return False
+                except mysql.connector.Error as err:
+                    print(err)
         except mysql.connector.Error as err:
             print(err)
     except mysql.connector.Error as err:
@@ -63,8 +66,6 @@ def confirm_password(username, passwd):
         return False
         
     
-
-
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -78,7 +79,6 @@ def login():
             flash("Login Failed!")
 
     return render_template("login.html")
-
 
 
 @auth.route('/logout')
@@ -130,9 +130,11 @@ def insert_user_into_db(username, password, firstName, lastName, email):
         mycursor = db.cursor()
 
         try:
-            query_insert_user = "INSERT INTO users (username, password, firstName, lastName, email) " + "VALUES ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + email  + "');"
-            mycursor.execute(query_insert_user)
-            flash('Account successfully created!', category='success')
+
+            if(isValidInput(username) and isValidInput(password) and isValidInput(firstName) and isValidInput(lastName) and isValidEmail(email)):
+                query_insert_user = "INSERT INTO users (username, password, firstName, lastName, email) " + "VALUES ('" + username + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + email  + "');"
+                mycursor.execute(query_insert_user)
+                flash('Account successfully created!', category='success')
 
         except mysql.connector.Error as err:
             flash(err)
@@ -146,6 +148,17 @@ def insert_user_into_db(username, password, firstName, lastName, email):
     else:
         db.close()
 
+def isValidInput(input1):
+    if(input1.isalnum()):
+        return True
+    return False
+
+def isValidEmail(email):
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+ 
+    if(re.fullmatch(regex, email)):
+        return True
+    return False
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -172,6 +185,13 @@ def sign_up():
         elif len(password) < 4:
             flash('Password must be at least 3 characters.', category='error')
         else:
-            insert_user_into_db(username, password, firstName, lastName, email)
+            # SQL Injection Prevention
+            if(isValidInput(username) and isValidInput(password) and isValidInput(firstName) and isValidInput(lastName) and isValidEmail(email)):
+                insert_user_into_db(username, password, firstName, lastName, email)
+            else:
+                flash('Input not alpha-numeric')
             
     return render_template("sign_up.html")
+
+
+   
