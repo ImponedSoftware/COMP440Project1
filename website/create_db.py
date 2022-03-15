@@ -1,3 +1,5 @@
+# Just for testing, now related to the project
+
 import mysql.connector
 
 mydb = mysql.connector.connect(
