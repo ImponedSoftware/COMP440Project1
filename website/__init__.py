@@ -1,15 +1,16 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import mysql
 from os import path
+from flask_login import LoginManager
 
 db = SQLAlchemy()
-DB_NAME = "users.db"
+DB_NAME = "user.db"
 
 
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'JSM'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
     db.init_app(app)
 
     from .views import views
@@ -18,4 +19,22 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
+    from .models import Users
+
+    create_database(app)
+
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(id):
+        return Users.query.get(int(id))
+
     return app
+
+
+def create_database(app):
+    if not path.exists('website/' + DB_NAME):
+        db.create_all(app=app)
+        print('Created Database!')
