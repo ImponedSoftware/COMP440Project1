@@ -44,9 +44,9 @@ def sign_up():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
 
-        users = Users.query.filter_by(username=username).first()
+        users_check = Users.query.filter_by(username=username).first()
         email_check = Users.query.filter_by(email=email).first()
-        if users:
+        if users_check:
             flash('Username already exists.', category='error')
         elif email_check:
             flash('Email already exists.', category='error')
