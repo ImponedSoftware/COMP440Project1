@@ -10,7 +10,10 @@ DB_NAME = "user.db"
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'JSM'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/user'
+
+    # Phrase 2 wants username="comp440" and password="pass1234"
+    #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://user:password4@localhost/{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:pass1234@localhost/user'
     db.init_app(app)
 
     from .views import views
