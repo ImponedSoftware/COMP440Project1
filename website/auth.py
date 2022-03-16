@@ -1,70 +1,10 @@
-import mysql.connector
-import re
-from mysql.connector import errorcode
-from flask import Blueprint, render_template, request, flash
-
-
-# Make sure to change the email field in database to email type
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from .models import Users
+from werkzeug.security import generate_password_hash, check_password_hash
+from . import db
+from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
-
-my_host = "localhost"
-my_username = "root"
-my_password = "root"
-database = "COMP440_Project"
-
-
-def confirm_password(username, passwd):
-    try:
-        # Connect to database
-        db = mysql.connector.connect(
-            host=my_host,
-            username=my_username,
-            password=my_password,
-            db=database
-        )
-
-        # Get cursor to start querying database
-        mycursor = db.cursor()
-
-        try:
-            if(isValidInput(username)):
-                # Query to database
-
-                query_get_password = "SELECT password FROM users WHERE username='" + username + "'"
-
-                try:
-                    # Execute query on database
-                    mycursor.execute(query_get_password)
-
-                    password_from_db = ""
-
-                    # Data from query is stored in my cursor as a tuple
-                    for password in mycursor:
-                        # Convert tuple returned by mycursor into a string to get password as a string
-                        password_from_db = "".join(password)
-                        print(password_from_db)
-
-                    # Check if password as parameter matches the password from the database
-                    if password_from_db == passwd:
-                        db.close()
-                        return True
-                    else:
-                        return False
-                except mysql.connector.Error as err:
-                    print(err)
-        except mysql.connector.Error as err:
-            print(err)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            flash("Error with username or password", category='error')
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            flash("Database does not exist", category='error')
-        else:
-            flash(err)
-    else:
-        db.close()
-        return False
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -73,106 +13,23 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        if confirm_password(username, password):
-            flash("Login Successful!", category='success')
-            return render_template("home.html", username=username)
+        users = Users.query.filter_by(username=username).first()
+        if users:
+            if check_password_hash(users.password, password):
+                flash("Login Successful!", category='success')
+                login_user(users, remember=True)
+                return redirect(url_for('views.home'))
+            else:
+                flash("Incorrect password. Please try again.", category='success')
         else:
-            flash("Login Failed!", category='error')
+            flash("Login Failed! Username does not exist.", category='error')
 
-    return render_template("login.html")
+    return render_template("login.html", users=current_user)
 
 
 @auth.route('/logout')
 def logout():
-    return "<p>Logout</p>"\
-
-
-
-@auth.route('/initialize_database')
-def initialize_database():
-    try:
-        # Connect to database
-        db = mysql.connector.connect(
-            host=my_host,
-            username=my_username,
-            password=my_password,
-            db=database
-        )
-
-        passed = ""
-
-        # Get cursor to start querying database
-        mycursor = db.cursor()
-
-        try:
-            # query_initialize_database = "DROP TABLE users; CREATE TABLE `comp440_p1`.`users` (`username` VARCHAR(60) NOT NULL,`password` VARCHAR(60) NOT NULL,`firstName` VARCHAR(60) NOT NULL,`lastName` VARCHAR(60) NOT NULL,`email` VARCHAR(60) NOT NULL, PRIMARY KEY (`username`), UNIQUE INDEX `email_UNIQUE` (`email` ASC)); INSERT INTO users (username, password, firstName, lastName, email) VALUES (\"comp440\", \"pass1234\", \"comp440FirstName\", \"comp440LastName\", \"comp440@gmail.com\");"
-            #query_initialize_database = "CREATE TABLE `comp440_Project`.`users` (`username` VARCHAR(60) NOT NULL,`password` VARCHAR(60) NOT NULL,`firstName` VARCHAR(60) NOT NULL,`lastName` VARCHAR(60) NOT NULL,`email` VARCHAR(60) NOT NULL, PRIMARY KEY (`username`), UNIQUE INDEX `email_UNIQUE` (`email` ASC));"
-            print("hello")
-            # mycursor.execute(query_initialize_database)
-
-        except mysql.connector.Error as err:
-            return "<h1>Error Query 11</h1>"
-
-        try:
-            query_add_user = "INSERT INTO users (username, password, firstName, lastName, email) VALUES (\"comp440\", \"pass1234\", \"comp440FirstName\", \"comp440LastName\", \"comp440@gmail.com\");"
-            mycursor.execute(query_add_user)
-            passed = "passed"
-        except mysql.connector.Error as err:
-            return "<h1>Error insert user</h1>"
-    except mysql.connector.Error as err:
-        return "<h1>Error Query 2 " + passed + "</h1>"
-    else:
-        db.close()
-        return "<h1>Database Initiated " + passed + "</h1>"
-
-
-def insert_user_into_db(username, password, firstName, lastName, email):
-    try:
-        # Connect to database
-        db = mysql.connector.connect(
-            host=my_host,
-            username=my_username,
-            password=my_password,
-            db=database
-        )
-
-        # Get cursor to start querying database
-        mycursor = db.cursor()
-
-        try:
-
-            if(isValidInput(username) and isValidInput(password) and isValidInput(firstName) and isValidInput(lastName) and isValidEmail(email)):
-                query_insert_user = "INSERT INTO users (username, password, firstName, lastName, email) " + "VALUES ('" + \
-                    username + "', '" + password + "', '" + firstName + \
-                    "', '" + lastName + "', '" + email + "');"
-                mycursor.execute(query_insert_user)
-                flash('Account successfully created!', category='success')
-
-        except mysql.connector.Error as err:
-            flash(err)
-    except mysql.connector.Error as err:
-        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
-            flash("Error with username or password", category='error')
-        elif err.errno == errorcode.ER_BAD_DB_ERROR:
-            flash("Database does not exist", category='error')
-        else:
-            flash(err, category='error')
-    else:
-        db.close()
-
-
-def isValidInput(input1):
-    if(input1.isalnum()):
-        return True
-    return False
-
-
-def isValidEmail(email):
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-
-    if(re.fullmatch(regex, email)):
-        return True
-    return False
+    return "<p>Logout</p>"
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
@@ -187,7 +44,13 @@ def sign_up():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
 
-        if len(firstName) < 2:
+        users = Users.query.filter_by(username=username).first()
+        email_check = Users.query.filter_by(email=email).first()
+        if users:
+            flash('Username already exists.', category='error')
+        elif email_check:
+            flash('Email already exists.', category='error')
+        elif len(firstName) < 2:
             flash('First name must be greater than 1 character.', category='error')
         elif len(lastName) < 2:
             flash('Last name must be greater than 1 character.', category='error')
@@ -200,11 +63,13 @@ def sign_up():
         elif len(password) < 4:
             flash('Password must be at least 3 characters.', category='error')
         else:
-            # SQL Injection Prevention
-            if(isValidInput(username) and isValidInput(password) and isValidInput(firstName) and isValidInput(lastName) and isValidEmail(email)):
-                insert_user_into_db(username, password,
-                                    firstName, lastName, email)
-            else:
-                flash('Input not alpha-numeric', category='error')
+            new_user = Users(username=username, password=generate_password_hash(
+                password, method='sha256'), firstName=firstName, lastName=lastName, email=email)
+            db.session.add(new_user)
+            db.session.commit()
+            # This keeps the user logged in until the user decides to logout
+            login_user(new_user, remember=True)
+            flash('Account created!', category='success')
+            return redirect(url_for('views.home', users=current_user))
 
-    return render_template("sign_up.html")
+    return render_template("sign_up.html", users=current_user)
