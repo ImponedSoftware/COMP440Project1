@@ -4,7 +4,7 @@ from os import path
 from flask_login import LoginManager
 
 db = SQLAlchemy()
-DB_NAME = "user_database.db"
+DB_NAME = "440_database.db"
 
 
 def create_app():
@@ -13,7 +13,7 @@ def create_app():
 
     # Phrase 2 wants username="comp440" and password="pass1234"
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://user:password4@localhost/{DB_NAME}'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://comp440:pass1234@localhost/user_database'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://comp440:pass1234@localhost/440_database'
     db.init_app(app)
 
     from .views import views

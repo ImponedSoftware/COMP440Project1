@@ -28,8 +28,10 @@ def login():
 
 
 @auth.route('/logout')
+@login_required
 def logout():
-    return "<p>Logout</p>"
+    logout_user()
+    return redirect(url_for('auth.login'))
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
@@ -44,9 +46,9 @@ def sign_up():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
 
-        users_check = Users.query.filter_by(username=username).first()
+        user_check = Users.query.filter_by(username=username).first()
         email_check = Users.query.filter_by(email=email).first()
-        if users_check:
+        if user_check:
             flash('Username already exists.', category='error')
         elif email_check:
             flash('Email already exists.', category='error')
@@ -63,8 +65,8 @@ def sign_up():
         elif len(password) < 4:
             flash('Password must be at least 3 characters.', category='error')
         else:
-            new_user = Users(username=username, password=generate_password_hash(
-                password, method='sha256'), firstName=firstName, lastName=lastName, email=email)
+            new_user = Users(firstName=firstName, lastName=lastName, email=email,
+                             username=username, password=generate_password_hash(password, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
             # This keeps the user logged in until the user decides to logout
