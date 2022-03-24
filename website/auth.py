@@ -27,11 +27,19 @@ def login():
     return render_template("login.html", users=current_user)
 
 
+# Will only see this after being logged in
 @auth.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
+# Will only see intialize database after being logged in
+@auth.route('/initializeDB')
+@login_required
+def initializeDB():
+    return render_template('initializeDB.html', users=current_user)
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
@@ -46,6 +54,7 @@ def sign_up():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
 
+        #Checks if the username or email is taken, along with other error messages
         user_check = Users.query.filter_by(username=username).first()
         email_check = Users.query.filter_by(email=email).first()
         if user_check:
@@ -65,11 +74,11 @@ def sign_up():
         elif len(password) < 4:
             flash('Password must be at least 3 characters.', category='error')
         else:
+            # Account will be added to the database and stays logged in until they actually logout
             new_user = Users(firstName=firstName, lastName=lastName, email=email,
                              username=username, password=generate_password_hash(password, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
-            # This keeps the user logged in until the user decides to logout
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
             return redirect(url_for('views.home', users=current_user))

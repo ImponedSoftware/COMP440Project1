@@ -12,8 +12,8 @@ mydb = mysql.connector.connect(
 my_cursor = mydb.cursor()
 
 # Already created now
-my_cursor.execute("CREATE DATABASE user_database")
-#my_cursor.execute("DROP DATABASE user_database")
+my_cursor.execute("CREATE DATABASE 440_database")
+#my_cursor.execute("DROP DATABASE 440_database")
 
 my_cursor.execute("SHOW DATABASES")
 
