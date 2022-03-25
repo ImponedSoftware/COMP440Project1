@@ -26,7 +26,7 @@ def home():
 # Initialize DB Function
 # CANNOT click the button twice without the deleting the rows created first on the workbench
 # Since it'll reread from projectDB.sql and get dupes usernames
-# And it'll cause an error when you click it continuously
+# So, it'll cause an error when you click it continuously
 @views.route("/initializeDB", methods=['GET','POST'])
 @login_required
 def initializeDB():
@@ -38,6 +38,8 @@ def initializeDB():
         fd = open('projectDB.sql', 'r')
         sqlFile = fd.read()
         fd.close()
+
+        # Add information read to the table
         sqlCommands = sqlFile.split(';')
         for command in sqlCommands:
                 if command.strip() != '':
@@ -45,3 +47,9 @@ def initializeDB():
                     cursor.execute(command)
                     mydb.commit()
     return render_template('initializeDB.html', users=current_user)
+
+# Must be logged in successfully to access the posts page
+@views.route('/posts')
+@login_required
+def posts():
+    return render_template("posts.html", users=current_user)

@@ -6,3 +6,7 @@ where username in
 ('Blackpink', 'IKON', 'EXO', 'Infinite', 'Inspirit', 'IU', 'Ueana', 'Seventeen', 'Carat', 'WannaOne'); 
 
 'example' cannot be deleted sometimes...IDK why
+
+------------------------------------
+Reset root password:
+https://www.codegrepper.com/code-examples/sql/reset+mysql+root+password+mac 
