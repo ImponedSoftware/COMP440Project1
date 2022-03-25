@@ -50,6 +50,7 @@ def initializeDB():
 
 # Must be logged in successfully to access the posts page
 @views.route('/posts')
+#@views.route('/posts/<username>')
 @login_required
 def posts():
     return render_template("posts.html", users=current_user)
