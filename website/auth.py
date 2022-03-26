@@ -19,7 +19,7 @@ def login():
                 flash("Login Successful!", category='success')
                 # User stays logged in, until they actually logout
                 login_user(users, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.welcome'))
             else:
                 flash("Incorrect password. Please try again.", category='error')
         else:
@@ -85,6 +85,6 @@ def sign_up():
             # User stays logged in, until they actually wants to logout
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('views.home', users=current_user))
+            return redirect(url_for('views.welcome', users=current_user))
 
     return render_template("sign_up.html", users=current_user)
