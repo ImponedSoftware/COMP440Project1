@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block title%}Post{% endblock %}
+
+{%block content %}
+    <br />
+    <h1 style="text-align: center;">Compose a Post</h1>
+    <br />
+    
+    <form method="POST">
+        <textarea
+            class="form-control"
+            id="subject"
+            name="subject"
+            placeholder="Subject"
+        ></textarea>
+
+        <textarea
+            class="form-control"
+            id="description"
+            name="description"
+            placeholder="Description"
+        ></textarea>
+
+        <textarea
+            class="form-control"
+            id="tag"
+            name="tag"
+            placeholder="Tags"
+        ></textarea>
+
+        <br />
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-primary btn-lg"
+            >  Post it!  </button>
+        </div>
+    </form>
+
+    <br />
+    <div style="text-align: center;">
+        <a href="/posts">
+            <button type="button" class="btn btn-primary btn-lg"
+                style="background-color: #fc6767;   border-color: #fc6767;"
+            >Go Back</button>
+        </a>
+    </div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from .models import Users
+from .models import Users, Post, Comment, Tag
 from . import db
 import mysql.connector
 
@@ -48,9 +48,21 @@ def initializeDB():
                     mydb.commit()
     return render_template('initializeDB.html', users=current_user)
 
-# Must be logged in successfully to access the posts page
+# Posts page
 @views.route('/posts')
-#@views.route('/posts/<username>')
+@login_required
+def posts_Home():
+    posts = Post.query.all()
+    return render_template("posts.html", users=current_user, posts=posts)
+
+# Create new post method
+@views.route("/create_post", methods=['GET', 'POST'])
+@login_required
+def create_post():
+    return render_template('create_post.html', users=current_user)
+
+# This will be use to look at post from specific users
+@views.route('/posts/<username>')
 @login_required
 def posts():
     return render_template("posts.html", users=current_user)
