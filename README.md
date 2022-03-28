@@ -1,4 +1,4 @@
-# COMP440Project1
+# COMP440
 Jonathan Gomez
 Megan Ngo
 Sami Shami
