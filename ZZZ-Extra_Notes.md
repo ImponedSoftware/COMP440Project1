@@ -10,3 +10,8 @@ where username in
 ------------------------------------
 Reset root password:
 https://www.codegrepper.com/code-examples/sql/reset+mysql+root+password+mac 
+
+------------------------------------
+Stop code:
+- sudo lsof -i:5000
+- kill #

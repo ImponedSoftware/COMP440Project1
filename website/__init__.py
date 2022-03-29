@@ -14,7 +14,7 @@ def create_app():
 
     # 'SQLALCHEMY_DATABASE_URI' for SQL Injection prevention
     #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://user:password4@localhost/{DB_NAME}'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://comp440:pass1234@localhost/440_database'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/440_database'
     db.init_app(app)
 
     from .views import views
