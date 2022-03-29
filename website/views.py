@@ -8,8 +8,8 @@ views = Blueprint('views', __name__)
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="pass1234",
-    database="440_database"
+    passwd="root",
+    database="test_P1"
 )
 
 

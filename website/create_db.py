@@ -5,14 +5,14 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="pass1234"
+    passwd="root"
 )
 
 my_cursor = mydb.cursor()
 
 # Already created now
-my_cursor.execute("CREATE DATABASE user_database")
-#my_cursor.execute("DROP DATABASE user_database")
+my_cursor.execute("CREATE DATABASE test_P1")
+#my_cursor.execute("DROP DATABASE test_P1")
 
 my_cursor.execute("SHOW DATABASES")
 
