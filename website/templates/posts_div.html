@@ -1,6 +1,7 @@
 {% extends "base.html" %} {% block title %}Post{% endblock %} 
 
 {% block content %}
+    <br />
     <h1 style="text-align: center;">{%block header%}Posts{%endblock%}</h1>
     <div id="posts">
         {% for post in posts %}
@@ -41,7 +42,7 @@
             </div>
             
             <hr />
-            <div class="card-footer text-muted">{{post.date_created}}</div>
+            <div class="card-footer text-muted">{{post.dateCreatedOn}}</div>
         </div>
         
         <br />
@@ -56,7 +57,7 @@
                         </div>
                         
                         <div>
-                            <small class="text-muted"> {{comment.date_created}} </small>
+                            <small class="text-muted"> {{comment.dateCreatedOn}} </small>
                             {% if users.id == comment.author or users.id == post.author %}
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown"></button>
@@ -106,6 +107,7 @@
     </div>
 
     {% block footer %}
+    <br />
     <div style="text-align:center;">
         <a href="/create_post"><button type="button" class="btn btn-primary btn-lg">
             Create a Post

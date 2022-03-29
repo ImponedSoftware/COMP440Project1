@@ -29,8 +29,8 @@
       </button>
       <div class="collapse navbar-collapse" id="navbar">
         <div class="navbar-nav">
-          {% if users.is_authenticated %}
           <a class="nav-item nav-link" href="/welcome">Welcome</a>
+          {% if users.is_authenticated %}
           <a class="nav-item nav-link" href="/post_main">Posts</a>
           <a class="nav-item nav-link" href="/initializeDB">Initialize Database</a>
           <a class="nav-item nav-link" href="/logout">Logout</a>
