@@ -2,10 +2,9 @@
 
 import mysql.connector
 
-# Phrase 2 wants username="comp440" and password="pass1234"
 mydb = mysql.connector.connect(
     host="localhost",
-    user="comp440",
+    user="root",
     passwd="pass1234"
 )
 
