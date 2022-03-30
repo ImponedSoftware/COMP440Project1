@@ -9,13 +9,13 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <a href="/posts/{{post.users.username}}">{{post.users.username}}</a>
                 {% if users.id == post.author %}
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown"></button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="/delete-post/{{post.id}}" class="dropdown-item">Delete</a>
-                        </li>
-                    </ul>
+                <!-- Dropdown menu for users to delete their posts-->
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/delete-post/{{post.id}}">Delete</a>
+                    </div>
                 </div>
                 {% endif %}
             </div>

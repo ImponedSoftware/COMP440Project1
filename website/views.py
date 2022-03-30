@@ -78,13 +78,13 @@ def create_post():
         flash("Already reached limit. Can only create 2 post per day!", category='error')
         return redirect(url_for('views.post_main'))
     elif request.method == "POST":
-        # Get post info if everything is filled out
+        # Get post info if everything is filled out and limit is not reached
         print()
         subject = request.form.get('subject')
         description = request.form.get('description')
         tag_list = request.form.get('tag')
-        tags = tag_list.split("#")
-        print(tags)
+        # Seperate the tags by looking for ", "
+        tags = tag_list.split(", ")
 
         # Show message if subject is empty
         if not subject:
@@ -92,8 +92,8 @@ def create_post():
         else:
             # Match post to user's ID
             cursor = mydb.cursor()
-            query_2 = "SELECT username FROM users WHERE id = %s"
-            currentUser = cursor.execute(query_2, [current_user.id])
+            query2 = "SELECT username FROM users WHERE id = %s"
+            currentUser = cursor.execute(query2, [current_user.id])
             currentUser = cursor.fetchone()[0]
             print(current_user.id)
             print(currentUser)
@@ -104,9 +104,9 @@ def create_post():
             db.session.add(post)
             db.session.commit()
 
-            # Adding the tags to the table
+            # Adding the tags from the post to the table
             for tag in tags:
-                tags = Tag(text=tag, author=current_user.id, postID=post.id)
+                tags = Tag(text=tag, author=current_user.id, post_id=post.id)
                 db.session.add(tags)
                 db.session.commit()
 
@@ -120,9 +120,10 @@ def create_post():
 # Delete post method
 @views.route('/delete-post/<id>')
 @login_required
-def deletePost(id):
+def delete_post(id):
     post = Post.query.filter_by(id=id).first()
 
+    # Cannot delete post if it wasn't created by the user
     if current_user.id != post.author:
         flash('Post belongs to another user. You do not have permission to delete it.', category='error')
     else:

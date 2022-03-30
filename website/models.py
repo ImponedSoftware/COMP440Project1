@@ -33,11 +33,11 @@ class Comment(db.Model):
     sentiment = db.Column(db.String(20), nullable=False)
     dateCreatedOn = db.Column(db.Date(), default=func.now())
     author = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
-    postID = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE"), nullable=False)
 
 # Tags table column
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(200), nullable=False)
     author = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
-    postID = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE"), nullable=False)
