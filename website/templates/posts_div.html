@@ -11,7 +11,7 @@
                 {% if users.id == post.author %}
                 <!-- Dropdown menu for users to delete their posts-->
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
                     </button>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="/delete-post/{{post.id}}">Delete</a>
@@ -52,20 +52,21 @@
                     {% for comment in post.comments %}
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <a href="/posts/{{comment.users.username}}">{{comment.users.username}}</a
-                                >: {{comment.text}}->{{comment.sentiment}}
+                            <a href="/posts/{{comment.users.username}}">
+                                {{comment.users.username}}</a
+                                >: {{comment.text}} -> [{{comment.sentiment}}]
                         </div>
                         
                         <div>
                             <small class="text-muted"> {{comment.dateCreatedOn}} </small>
                             {% if users.id == comment.author or users.id == post.author %}
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown"></button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="/delete-comment/{{comment.id}}" class="dropdown-item">Delete</a>
-                                    </li>
-                                </ul>
+                            <!-- Dropdown menu for users to delete their comments-->
+                            <div class="dropdown">
+                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/delete-comment/{{comment.id}}">Delete</a>
+                                </div>
                             </div>
                             {% endif %}
                         </div>
@@ -77,7 +78,7 @@
         
         <p class="card-text">
             {% if post.comments | length > 0 %}
-            <a data-bs-toggle="collapse" href="#comments-{{post.id}}" role="button">
+            <a data-toggle="collapse" href="#comments-{{post.id}}" role="button">
                 <small>View {{post.comments | length}} Comments</small>
             </a>
             {% else %}
