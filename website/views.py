@@ -84,8 +84,8 @@ def create_post():
         subject = request.form.get('subject')
         description = request.form.get('description')
         tag_list = request.form.get('tag')
-        # Seperate the tags by looking for ", "
-        tags = tag_list.split(", ")
+        # Seperate the tags by looking for ","
+        tags = tag_list.split(",")
 
         # Show message if subject is empty
         if not subject:
@@ -172,6 +172,7 @@ def create_comment(post_id):
     # Query to select DISTINCT author relating to the post.id
     query3 = "SELECT DISTINCT post.author FROM post WHERE post.id = %s"
     cursor.execute(query3, [post_id])
+    # Note: If the line below is giving issues, just copy, delete, and paste it
     current_author = cursor.fetchone()[0]
     mydb.commit()
     cursor.close()
