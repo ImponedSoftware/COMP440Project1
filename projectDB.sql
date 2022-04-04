@@ -59,3 +59,17 @@ VALUES
         ('memories', '6', '11');
 
 -- Random comments being added to different posts
+-- Post_id with comments: 3, 4, 5, 7, 9, 10, 11
+-- Post with only negative commemts: 3, 5, 10
+INSERT INTO comment(sentiment, text, dateCreatedOn, post_id, author)
+VALUES
+        ('negative', 'Is this from that drama?! What is all the hype about?', '2022-03-06', '3', '5'),
+        ('negative', 'It is actually better than a lot of recent fantasy dramas.', '2022-03-26', '3', '7'),
+        ('positive', 'Nice lyrics.','2022-03-12', '4', '11'),
+        ('positive', 'Oh! This was a popular song a few years ago. Iconic!', '2022-04-01', '7', '7'),
+        ('negative', 'I guess some people just do not know what they are missing.','2022-04-05', '3', '6'),
+        ('positive', 'This is totally unrelated, but I just wanted to say I was a HUGE fan of this song~!', '2022-04-27', '9', '5'),
+        ('positive', 'Have you checked out their other albums?! I believe that they would have been in the top 3.','2022-04-27', '9', '8'),
+        ('negative', 'I was hoping that comeback would be more of a dance title track, not a sad song.','2022-05-02', '10', '7'),
+        ('positive', 'I was expecting something else, but this is good enough.','2022-05-03', '11', '5'),
+        ('negative', 'Who? Did she really stayed single though? I remembered she dated someone else soon after this was released.', '2022-04-15', '5', '3');
