@@ -29,3 +29,33 @@ VALUES
         (9, 'Beautiful', 'I was young, I did not know I would be like this. I thought it was a given back then.', '2022-04-26', 'WannaOne', '11'),
         (10, "Don't Wanna Cry", 'The path that used to be familiar, it is now unfamiliar. Is this the path I know? I ask myself.', '2022-05-01', 'Seventeen', '9'),
         (11, 'Voice of My Heart', 'I call out without sound. I call out remembering you.', '2022-05-01', 'Inspirit', '6');
+
+-- Random tags being added to different posts
+-- Dupe Tags: 
+--    'ballad' on post_id 3, 4
+--    'OST' on post_id 3, 8
+--    'healing' on post_id 4, 8, 9
+--    'heartbreak' and 'calming' on post_id 7, 10
+INSERT INTO tag(text, author, post_id)
+VALUES
+        ('29', '7', '2'),
+        ('ballad', '4', '3'),
+        ('OST', '4', '3'),
+        ('ballad', '5', '4'),
+        ('healing', '5', '4'),
+        ('single', '2', '5'),
+        ('snowdrop', '2', '5'),
+        ('new_era', '10', '6'),
+        ('concert', '10', '6'),
+        ('heartbreak', '3', '7'),
+        ('calming', '3', '7'),
+        ('OST', '4', '8'),
+        ('healing', '4', '8'),
+        ('healing', '11', '9'),
+        ('youth', '11', '9'),
+        ('timeless, farewell', '11', '9'),
+        ('heartbreak', '9', '10'),
+        ('calming', '9', '10'),
+        ('memories', '6', '11');
+
+-- Random comments being added to different posts
