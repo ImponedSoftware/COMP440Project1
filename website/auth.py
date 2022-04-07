@@ -6,7 +6,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 auth = Blueprint('auth', __name__)
 
-
+# Login method: checks if username & password entered DO exists
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -17,8 +17,9 @@ def login():
         if users:
             if check_password_hash(users.password, password):
                 flash("Login Successful!", category='success')
+                # User stays logged in, until they actually logout
                 login_user(users, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.welcome'))
             else:
                 flash("Incorrect password. Please try again.", category='error')
         else:
@@ -27,6 +28,7 @@ def login():
     return render_template("login.html", users=current_user)
 
 
+# Will only see this after being logged in, so they can logout
 @auth.route('/logout')
 @login_required
 def logout():
@@ -34,6 +36,14 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
+# Will only see this tab option after being logged in
+@auth.route('/initializeDB')
+@login_required
+def initializeDB():
+    return render_template('initializeDB.html', users=current_user)
+
+
+# Sign up method, checks if all the requirements are met to add new user to DB
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     error = None
@@ -46,6 +56,7 @@ def sign_up():
         password = request.form.get('password')
         confirmPassword = request.form.get('confirmPassword')
 
+        #Checks if the username or email is taken yet, along with other error messages
         user_check = Users.query.filter_by(username=username).first()
         email_check = Users.query.filter_by(email=email).first()
         if user_check:
@@ -65,13 +76,15 @@ def sign_up():
         elif len(password) < 4:
             flash('Password must be at least 3 characters.', category='error')
         else:
+            # Account will be added to the database and stays logged in until they actually logout
             new_user = Users(firstName=firstName, lastName=lastName, email=email,
                              username=username, password=generate_password_hash(password, method='sha256'))
+            # '.add' and '.commit' is part of SQLALCHEMY safe commands to prevent SQL Injection
             db.session.add(new_user)
             db.session.commit()
-            # This keeps the user logged in until the user decides to logout
+            # User stays logged in, until they actually wants to logout
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('views.home', users=current_user))
+            return redirect(url_for('views.welcome', users=current_user))
 
     return render_template("sign_up.html", users=current_user)
