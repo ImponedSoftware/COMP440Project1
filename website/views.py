@@ -8,7 +8,6 @@ import mysql.connector
 
 views = Blueprint('views', __name__)
 
-# Phrase 2 wants username="comp440" and password="pass1234"
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
