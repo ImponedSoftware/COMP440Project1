@@ -22,7 +22,7 @@ mydb = mysql.connector.connect(
 def welcome():
     return render_template("welcome.html", users=current_user)
 
-# ----------------------------------- Initialize DB Mehtod -------------------------------------------------------
+# ----------------------------------- Initialize DB Method -----------------------------------------------------------------------------------
 # Initialize DB Function
 # CANNOT click the button twice without the deleting the rows created first on the workbench
 # Since it'll reread from projectDB.sql and get dupes usernames
@@ -48,7 +48,7 @@ def initializeDB():
                     mydb.commit()
     return render_template('initializeDB.html', users=current_user)
 
-# ----------------------------------- Post Mehtods -------------------------------------------------------
+# ----------------------------------- Post Methods -----------------------------------------------------------------------------------------
 
 # Main posts page view
 @views.route('/post_main')
@@ -147,7 +147,7 @@ def posts(username):
 
     return render_template("posts.html", users=current_user, posts=posts, username=username)
 
-# ----------------------------------- Comments Mehtods -------------------------------------------------------
+# ----------------------------------- Comments Methods -------------------------------------------------------------------------------------
 
 # Create comments on other posts
 @views.route("/create-comment/<post_id>", methods=['GET', 'POST'])
@@ -218,7 +218,7 @@ def delete_comment(comment_id):
     
     return redirect(url_for('views.post_main'))
 
-# ----------------------------------- Stats Mehtods -------------------------------------------------------
+# ----------------------------------- Stats Methods -------------------------------------------------------------------------------------------
 
 # Basic layout of Stats page
 @views.route("/stats", methods=['GET','POST'])
@@ -299,7 +299,6 @@ def stats():
                 #    flash(results[0], category='success')
     return render_template('stats.html', users=current_user)
 
-# ------ NOT DONE ---------
 # List the users who post at least two blogs, one has a tag of “X”, and another has a tag of “Y”
 # Demo: Should only display EXO and Seventeen for the tags (heartbreak and calming)
 @views.route("/tags_check", methods=['GET','POST'])
@@ -309,18 +308,17 @@ def tags_check():
         tag1 = request.form.get('tag1')
         tag2 = request.form.get('tag2')
         cursor = mydb.cursor()
-        # Query to check if an author posted >=2 times
-        #query = "SELECT username FROM users WHERE users.id IN (SELECT author FROM post GROUP BY author HAVING COUNT(*) >= 2);"
-        query = "SELECT DISTINCT username FROM users JOIN tag a ON a.author = users.id JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.text = (%s) AND b.text = (%s));"
+        query = "SELECT DISTINCT username FROM users INNER JOIN tag a ON a.author = users.id INNER JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) from post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
         result = cursor.execute(query, (tag1, tag2))
         result = cursor.fetchall()
         mydb.commit()
         cursor.close()
         if not result:
-            flash("No users has 2 posts using those tags.", category='error')
-        for results in result:
-            # return render_template("table_usernames.html", value=result)
-            flash(results[0], category='success')
+            flash("No users has created 2 or more posts, and use those tags in a post.", category='error')
+        else:
+            #for results in result:
+                return render_template("table_usernames.html", value=result)
+                #flash(results[0], category='success')
     return render_template("tags_check.html", users=current_user)
 
 # List all the blogs of user X, such that all the comments are positive for these blogs
@@ -413,3 +411,52 @@ def hobby_check():
             return render_template("table_hobby.html", value=result)
 
     return render_template("hobby.html", users=current_user)
+
+# ----------------------------------- Display Table Methods -------------------------------------------------------------------------------------------
+
+# Basic layout of Table page
+@views.route("/table_page", methods=['GET','POST'])
+@login_required
+def tables_display():
+    if request.method == 'POST':
+        if "Hobby" in request.form:
+            return redirect(url_for('views.hobby_table'))
+        elif "Follow" in request.form:
+            return redirect(url_for('views.follower_table'))
+    return render_template('table_page.html', users=current_user)
+
+# Display Table for Hobbies
+@views.route("/display_hobby", methods=['GET','POST'])
+@login_required
+def hobby_table():
+    cursor = mydb.cursor()
+    query = "SELECT username, hobbyText FROM users INNER JOIN hobby where hobby.userId = users.id order by username;"
+    result = cursor.execute(query)
+    result = cursor.fetchall()
+    mydb.commit()
+    cursor.close()
+
+    if not result:
+        flash("Nothing yet.", category='error')
+    else:
+        return render_template("display_hobby.html", value=result)
+
+    return render_template("display_hobby.html", users=current_user)
+
+# Display Table for Following
+@views.route("/display_follower", methods=['GET','POST'])
+@login_required
+def follower_table():
+    cursor = mydb.cursor()
+    query = "SELECT followerName AS Users, username AS Following FROM users INNER JOIN follower where follower.following = users.id order by users;"
+    result = cursor.execute(query)
+    result = cursor.fetchall()
+    mydb.commit()
+    cursor.close()
+
+    if not result:
+        flash("Nothing yet.", category='error')
+    else:
+        return render_template("display_follower.html", value=result)
+
+    return render_template("display_follower.html", users=current_user)

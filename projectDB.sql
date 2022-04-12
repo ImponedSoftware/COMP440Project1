@@ -37,7 +37,7 @@ VALUES
 --    'OST' on post_id 3, 8
 --    'healing' on post_id 4, 8, 9
 --    'heartbreak' and 'calming' on post_id 7, 10 (from IKON, EXO, and Seventeen)
---     Query #1 only returns Exo and Seventeen for tags: 'heartbreak' and 'calming'
+--     Query #1 only returns EXO and Seventeen for tags: 'heartbreak' and 'calming'
 INSERT INTO tag(text, author, post_id)
 VALUES
         ('29', '7', '2'),
@@ -98,8 +98,11 @@ VALUES
 
 -- Followers
 -- IKON and Inspirit follows IU
--- EXO and Carat follows Blackpink
--- EXO and WannaOne follows Infinite & Carat
+-- EXO follows Blackpink, Infinite, and Carat
+-- Infinite follows EXO
+-- Seventeen follows IKON and Inspirit
+-- Carat follows Blackpink and WannaOne
+-- WannaOne follows Infinite and Carat
 INSERT INTO Follower(id, followerName, following)
 VALUES
         ('1', 'IKON','7'),
