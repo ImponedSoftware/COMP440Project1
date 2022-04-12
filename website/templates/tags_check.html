@@ -1,0 +1,30 @@
+<!----  List the users who post at least two blogs, one has a tag of “X”, and another has a tag of “Y”. -->
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+    %}
+    <h1 style="text-align: center;">Insert the Two Tags</h1>
+    <br />
+    <form method="POST">
+      <textarea
+        placeholder="Enter First Tag: "
+        name="tag1"
+        id="tag1"
+        class="form-control"
+      ></textarea>
+      <textarea
+        placeholder="Enter Second Tag: "
+        name="tag2"
+        id="tag2"
+        class="form-control"
+      ></textarea>
+      <br />
+      <div style="text-align: center;">
+        <button type="submit" class="btn btn-lg btn-primary">Search</button>
+      </div>
+    </form>
+    <br />
+    <div style="text-align: center;">
+      <a href="/stats"
+        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
+      >
+    </div>
+    {%endblock %}

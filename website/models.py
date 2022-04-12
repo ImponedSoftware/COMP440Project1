@@ -1,4 +1,3 @@
-from email.policy import default
 from . import db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
@@ -41,3 +40,21 @@ class Tag(db.Model):
     text = db.Column(db.String(200), nullable=False)
     author = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id', ondelete="CASCADE"), nullable=False)
+
+# Leader table column
+class Leader(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    leaderName = db.Column(db.String(200), nullable=False)
+    leaderId = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+
+# Follower table column
+class Follower(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    followerName = db.Column(db.String(200), primary_key=True)
+    following = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
+
+#  Hobby table column
+class Hobby(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hobbyText = db.Column(db.String(200), nullable=False)
+    userId = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)

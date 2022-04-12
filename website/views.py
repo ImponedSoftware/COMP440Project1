@@ -1,8 +1,7 @@
 from crypt import methods
 from flask import Blueprint, render_template, request, flash, jsonify, redirect, url_for
 from flask_login import login_required, current_user
-from sympy import re
-from .models import Users, Post, Comment, Tag
+from .models import Users, Post, Comment, Tag, Leader, Follower, Hobby
 from . import db
 import mysql.connector
 
@@ -218,3 +217,199 @@ def delete_comment(comment_id):
         db.session.commit()
     
     return redirect(url_for('views.post_main'))
+
+# ----------------------------------- Stats Mehtods -------------------------------------------------------
+
+# Basic layout of Stats page
+@views.route("/stats", methods=['GET','POST'])
+@login_required
+def stats():
+    if request.method == 'POST':
+        if "TagsCheck" in request.form:
+            return redirect(url_for('views.tags_check'))
+        elif "Positive" in request.form:
+            return redirect(url_for('views.allPositive'))
+        elif "Date" in request.form:
+            return redirect(url_for('views.blog_date'))
+        elif "Follow" in request.form:
+            return redirect(url_for('views.following_page'))
+        elif "Hobby" in request.form:
+           return redirect(url_for('views.hobby_check'))
+        elif "NeverBlog" in request.form:
+            # Display all the users who never posted a blog
+            cursor = mydb.cursor()
+            query = "SELECT users.username FROM users LEFT JOIN post ON post.author = users.id WHERE post.author IS NULL;"
+            result = cursor.execute(query)
+            result = cursor.fetchall()
+            mydb.commit()
+            cursor.close()
+
+            if not result:
+                flash("No users has never posted a blog.", category='error')
+            else:
+                return render_template("table_usernames.html", value=result)
+                #for results in result:
+                #    flash(results[0], category='success')
+        elif "NeverComment" in request.form:
+            # Display all the users who never posted a comment
+            cursor = mydb.cursor()
+            query = "SELECT users.username FROM users LEFT JOIN comment ON comment.author = users.id WHERE comment.author IS NULL;"
+            result = cursor.execute(query)
+            result = cursor.fetchall()
+            mydb.commit()
+            cursor.close()
+
+            if not result:
+                flash("No users have never posted a comment!", category='error')
+            else:
+                return render_template("table_usernames.html", value=result)
+                #for results in result:
+                #    flash(results[0], category='success')
+        elif "Negative" in request.form:
+            # Display those users who posted some comments, but each of them are negative
+            cursor = mydb.cursor()
+            query = "SELECT users.username FROM users JOIN comment a ON a.author = users.id WHERE a.author NOT IN (SELECT b.author FROM comment b WHERE b.sentiment = 'positive');"
+            result = cursor.execute(query)
+            result = cursor.fetchall()
+            mydb.commit()
+            cursor.close()
+
+            if not result:
+                flash("No users only posted negative comments.", category='error')
+            else:
+                return render_template("table_usernames.html", value=result)
+                #for results in result:
+                    #flash(results[0], category='success')
+        elif "noNegative" in request.form:
+            # Display those users such that all the blogs they posted so far never recieved any negative comments
+            cursor = mydb.cursor()
+            query = "SELECT DISTINCT post.createdBy FROM post WHERE post.createdBy NOT IN (SELECT post.createdBy FROM comment RIGHT JOIN post ON comment.post_id = post.id WHERE comment.sentiment LIKE 'negative' GROUP BY post.createdBy) OR post.id = NULL;"
+            result = cursor.execute(query)
+            result = cursor.fetchall()
+            mydb.commit()
+            cursor.close()
+
+            print(result)
+
+            if not result:
+                flash("No blogs has only have positive comments.", category='error')
+            else:
+                return render_template("table_usernames.html", value=result)
+                #for results in result:
+                #    flash(results[0], category='success')
+    return render_template('stats.html', users=current_user)
+
+# ------ NOT DONE ---------
+# List the users who post at least two blogs, one has a tag of “X”, and another has a tag of “Y”
+# Demo: Should only display EXO and Seventeen for the tags (heartbreak and calming)
+@views.route("/tags_check", methods=['GET','POST'])
+@login_required
+def tags_check():
+    if request.method == 'POST':
+        tag1 = request.form.get('tag1')
+        tag2 = request.form.get('tag2')
+        cursor = mydb.cursor()
+        # Query to check if an author posted >=2 times
+        #query = "SELECT username FROM users WHERE users.id IN (SELECT author FROM post GROUP BY author HAVING COUNT(*) >= 2);"
+        query = "SELECT DISTINCT username FROM users JOIN tag a ON a.author = users.id JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.text = (%s) AND b.text = (%s));"
+        result = cursor.execute(query, (tag1, tag2))
+        result = cursor.fetchall()
+        mydb.commit()
+        cursor.close()
+        if not result:
+            flash("No users has 2 posts using those tags.", category='error')
+        for results in result:
+            # return render_template("table_usernames.html", value=result)
+            flash(results[0], category='success')
+    return render_template("tags_check.html", users=current_user)
+
+# List all the blogs of user X, such that all the comments are positive for these blogs
+@views.route("/allPositive", methods=['GET','POST'])
+@login_required
+def allPositive():
+    posts = Post.query.all()
+    pos = []
+    cursor = mydb.cursor()
+    query = "SELECT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive');"
+    positiveId = cursor.execute(query)
+    positiveId = cursor.fetchall()
+
+    if not positiveId:
+            flash("No post has only positive comments",  category='error')
+    else:
+            for id in positiveId:
+                pos.append(id[0])
+
+    mydb.commit()
+    cursor.close()
+
+    return render_template("allPositive.html", users=current_user, posts=posts, pos=pos)
+
+# List the users who posted the most number of blogs on (YYYY-MM-DD)
+# Demo requires blogs on 2022-05-01, should print Seventeen, Inspirit, and Carat
+@views.route("/blog_date", methods=['GET','POST'])
+@login_required
+def blog_date():
+    if request.method == 'POST':
+        date = request.form.get('date')
+        print(date)
+        cursor = mydb.cursor()
+        query = "SELECT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy, RANK() OVER(ORDER BY COUNT(post.id) DESC) AS ranked FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy ORDER BY ranked) AS myTable WHERE ranked = 1;"
+        params = [date]
+        result = cursor.execute(query, params)
+        result = cursor.fetchall()
+        mydb.commit()
+        cursor.close()
+        print(result)
+
+        if not result:
+            flash("No posts created on that day", category='error')
+        else:
+            return render_template("table_usernames.html", value=result)
+
+            # Or can just display as flash messages
+            #for results in result:
+             #   flash(results[0], category='success')
+    return render_template("blog_date.html", users=current_user)
+
+# List the users who are followed by both X and Y
+@views.route("/following_page", methods=['GET','POST'])
+@login_required
+def following_page():
+    if request.method == 'POST':
+        followerone = request.form.get('followerone')
+        followertwo = request.form.get('followertwo')
+        cursor = mydb.cursor()
+        query = "SELECT DISTINCT leader.leaderName FROM leader JOIN follower a ON a.following = leader.leaderId JOIN follower b ON b.following = leader.leaderId WHERE (a.following = b.following AND a.followername = (%s) AND b.followername = (%s)) AND (a.followername > b.followername OR a.followername < b.followername);"
+        result = cursor.execute(query, (followerone, followertwo))
+        result = cursor.fetchall()
+        mydb.commit()
+        cursor.close()
+
+        if not result:
+            flash("No common leader!", category='error')
+        else:
+            return render_template("table_usernames.html", value=result)
+            #for results in result:
+            #    flash(results[0], category='success')
+    return render_template("following_page.html", users=current_user)
+
+# List a user pair (A, B) such that they have at least one common hobby
+@views.route("/hobby", methods=['GET','POST'])
+@login_required
+def hobby_check():
+    if request.method == 'POST':
+        hobbyText = request.form.get('hobbyText')
+        cursor = mydb.cursor()
+        query = "SELECT DISTINCT a.username, b.username, hobbyText FROM users a INNER JOIN users b, hobby WHERE a.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND b.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND hobbyText = (%s) AND a.id <> b.id AND a.username > b.username;"
+        result = cursor.execute(query, (hobbyText, hobbyText, hobbyText))
+        result = cursor.fetchall()
+        mydb.commit()
+        cursor.close()
+
+        if not result:
+            flash("No users has the same hobby.", category='error')
+        else:
+            return render_template("table_hobby.html", value=result)
+
+    return render_template("hobby.html", users=current_user)

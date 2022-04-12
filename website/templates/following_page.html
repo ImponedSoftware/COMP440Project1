@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<h1 style="text-align: center;">Insert the Two Followers</h1>
+<br />
+<form method="POST">
+  <textarea
+    placeholder="Enter Follower One: "
+    name="followerone"
+    id="followerone"
+    class="form-control"
+  ></textarea>
+  <textarea
+    placeholder="Enter Follower Two: "
+    name="followertwo"
+    id="followertwo"
+    class="form-control"
+  ></textarea>
+  <br />
+  <div style="text-align: center;">
+    <button type="submit" class="btn btn-lg btn-primary">Post</button>
+  </div>
+</form>
+<br />
+<div style="text-align: center;">
+  <a href="/stats"
+    ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
+  >
+</div>
+{%endblock %}

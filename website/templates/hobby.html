@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+
+{% block content %}
+    <br />
+    <h1 style="text-align: center;">Insert Hobby</h1>
+    <br />
+    
+      <form method="POST">
+        <textarea
+            placeholder="Enter Hobby: "
+            name="hobbyText"
+            id="hobbyText"
+            class="form-control"
+        ></textarea>
+
+        <br />
+        <div style="text-align: center;">
+            <button type="submit" class="btn btn-lg btn-primary">Search</button>
+        </div>
+      </form>
+
+    <br />
+    <div style="text-align: center;">
+      <a href="/stats"
+        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
+      >
+    </div>
+  {%endblock %}
