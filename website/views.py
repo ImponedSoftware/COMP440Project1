@@ -430,7 +430,8 @@ def tables_display():
 @login_required
 def hobby_table():
     cursor = mydb.cursor()
-    query = "SELECT username, hobbyText FROM users INNER JOIN hobby where hobby.userId = users.id order by username;"
+    query = "SELECT hobbyText, GROUP_CONCAT(users.username separator ', ') FROM users INNER JOIN hobby WHERE users.id = hobby.userId group by hobbyText;"
+    # Basic display -> query = "SELECT username, hobbyText FROM users INNER JOIN hobby where hobby.userId = users.id order by username;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()
@@ -448,7 +449,8 @@ def hobby_table():
 @login_required
 def follower_table():
     cursor = mydb.cursor()
-    query = "SELECT followerName AS Users, username AS Following FROM users INNER JOIN follower where follower.following = users.id order by users;"
+    query = "SELECT followerName, GROUP_CONCAT(users.username separator ', ') FROM users INNER JOIN follower WHERE users.id = follower.following group by followerName;"
+    #query = "SELECT followerName AS Users, username AS Following FROM users INNER JOIN follower where follower.following = users.id order by users;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()

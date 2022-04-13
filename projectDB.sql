@@ -59,7 +59,8 @@ VALUES
         ('timeless, farewell', '11', '9'),
         ('heartbreak', '9', '10'),
         ('calming', '9', '10'),
-        ('memories', '6', '11');
+        ('memories', '6', '11'),
+        ('pretty', '9', '12');
 
 -- Random comments being added to different posts
 -- Post_id with comments: 3, 4, 5, 7, 9, 10, 11
@@ -122,7 +123,9 @@ VALUES
 -- 'knitting': IKON
 -- 'dancing': EXO, Seventeen
 -- 'singing': Blackpink, Infinite
--- 'drawing': Seventeen
+-- 'drawing': EXO, Seventeen, Carat
+-- 'gaming': EXO, Inspirit, Ueana
+-- Stats query: inputting 'gaming' should result 3 rows, rest 1 row
 INSERT INTO Hobby(id, hobbyText, userId)
 VALUES
         ('1', 'knitting', '3'),
@@ -130,4 +133,9 @@ VALUES
         ('3', 'dancing', '4'),
         ('4', 'singing', '2'),
         ('5', 'drawing', '9'),
-        ('6', 'singing', '5');
+        ('6', 'singing', '5'),
+        ('7', 'gaming', '6'),
+        ('8', 'gaming', '8'),
+        ('9', 'drawing', '4'),
+        ('10', 'gaming', '4'),
+        ('11', 'drawing', '10');
