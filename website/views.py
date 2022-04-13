@@ -450,7 +450,7 @@ def hobby_table():
 def follower_table():
     cursor = mydb.cursor()
     query = "SELECT followerName, GROUP_CONCAT(users.username separator ', ') FROM users INNER JOIN follower WHERE users.id = follower.following group by followerName;"
-    #query = "SELECT followerName AS Users, username AS Following FROM users INNER JOIN follower where follower.following = users.id order by users;"
+    # Basic display -> query = "SELECT followerName AS Users, username AS Following FROM users INNER JOIN follower where follower.following = users.id order by users;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()
