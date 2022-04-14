@@ -3,13 +3,13 @@ Jonathan Gomez
 Megan Ngo
 Sami Shami
 
-Phrase 2 Video Link:
+Phase 2 Video Link:
 https://youtu.be/vbi2_4hDkQ4 
 
 
 
 
-Phrase 1 Video Link:
+Phase 1 Video Link:
 https://youtu.be/MT9u3MaTtUU 
 
 SQLAlchemy Help:
