@@ -5,12 +5,18 @@ Before Recording:
 
 Recording:
 1) Login
-2) Show that the post page is blank originally
-3) Go to the "Initialize Database" and clicked on it ONCE only
-4) Go to the post page and show that the database has been initialized 
-    (should be seeing a bunch of posts, as it reads from the projectDB.sql file)
-5) Create 2 random posts. 
-    And show that there's an error message when we try creating the 3rd post
-6) Comments on 3 different posts with different sentiments (positive/negative)
-    And in between the 3 comments, show that we cannot comment on our own post and cannot comment on the same post twice, error messages
-7) Show that users can view comments under each posts by clicking on the 'Show X messages. And hiding it by clicking the same thing
+2) Show each query in the Stats page
+    a) Input tags: 'heartbreak' and 'calming' to return actual results. 
+        Any others should return a red flash message
+    b) Postive Comments is self-generated
+    c) Input Date: 2022-05-01 as stated in the Project PDF
+    d) Choose from any of these:
+        -- EXO and WannaOne (follows Infinite and Carat)
+        -- EXO and Carat (follows Blackpink)
+        -- IKON and Inspirit (follows IU)
+        Any others should return a red flash message
+    e) Two Methods:
+            Input Method can be any of these inputs:
+                - singing, dancing, gaming, photography, swimming
+            'Show All Possible Pairs' method is self-generated
+    f) The last 4 queries are self-generated

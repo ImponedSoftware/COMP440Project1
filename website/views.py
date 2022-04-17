@@ -400,7 +400,7 @@ def hobby_check():
     if request.method == 'POST':
         hobbyText = request.form.get('hobbyText')
         cursor = mydb.cursor()
-        query = "SELECT DISTINCT a.username, b.username, hobbyText FROM users a INNER JOIN users b, hobby WHERE a.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND b.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND hobbyText = (%s) AND a.id <> b.id AND a.username > b.username;"
+        query = "SELECT DISTINCT a.username, b.username, hobbyText FROM users a INNER JOIN users b, hobby WHERE a.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND b.id IN (SELECT DISTINCT userId FROM hobby WHERE hobbyText = (%s)) AND hobbyText = (%s) AND a.id <> b.id AND a.username > b.username ORDER BY a.username ASC;"
         result = cursor.execute(query, (hobbyText, hobbyText, hobbyText))
         result = cursor.fetchall()
         mydb.commit()
@@ -409,7 +409,7 @@ def hobby_check():
         if not result:
             flash("No users has the same hobby.", category='error')
         else:
-            return render_template("table_hobby.html", value=result)
+            return render_template("table_hobby_input.html", value=result)
 
     return render_template("hobby.html", users=current_user)
 
@@ -418,7 +418,7 @@ def hobby_check():
 @login_required
 def hobby_pairs():
     cursor = mydb.cursor()
-    query = "SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username asc) AS table1 GROUP BY A, B;"
+    query = "WITH cte AS (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM cte GROUP BY A, B;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()

@@ -122,10 +122,12 @@ VALUES
 -- Hobbies
 -- 'knitting': IKON
 -- 'dancing': EXO, Seventeen
--- 'singing': Blackpink, Infinite
+-- 'singing': Blackpink, Infinite, Carat
 -- 'drawing': EXO, Seventeen, Carat
--- 'gaming': EXO, Inspirit, Ueana
--- Stats query: inputting 'gaming' should result 3 rows, rest 1 row
+-- 'gaming': EXO, Carat, Inspirit
+-- 'swimming': Blackpink, Inspirit, IU
+-- 'photography': IKON, Seventeen, Carat, Blackpink
+-- Stats query: inputting 'knitting' should result nothing, while the rest has a few rows
 INSERT INTO Hobby(id, hobbyText, userId)
 VALUES
         ('1', 'knitting', '3'),
@@ -133,9 +135,18 @@ VALUES
         ('3', 'dancing', '4'),
         ('4', 'singing', '2'),
         ('5', 'drawing', '9'),
-        ('6', 'singing', '5'),
+        ('6', 'singing', '6'),
         ('7', 'gaming', '6'),
-        ('8', 'gaming', '8'),
+        ('8', 'gaming', '10'),
         ('9', 'drawing', '4'),
         ('10', 'gaming', '4'),
-        ('11', 'drawing', '10');
+        ('11', 'drawing', '10'),
+        ('12', 'swimming', '2'),
+        ('13', 'swimming', '7'),
+        ('14', 'swimming', '10'),
+        ('15', 'photography', '3'),
+        ('16', 'photography', '9'),
+        ('17', 'photography', '10'),
+        ('18', 'photography', '2'),
+        ('19', 'singing', '10'),
+        ('20', 'drawing', '3');
