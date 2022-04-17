@@ -393,7 +393,7 @@ def following_page():
             #    flash(results[0], category='success')
     return render_template("following_page.html", users=current_user)
 
-# List a user pair (A, B) such that they have at least one common hobby
+# (By input) List a user pair (A, B) such that they have at least one common hobby
 @views.route("/hobby", methods=['GET','POST'])
 @login_required
 def hobby_check():
@@ -410,6 +410,24 @@ def hobby_check():
             flash("No users has the same hobby.", category='error')
         else:
             return render_template("table_hobby.html", value=result)
+
+    return render_template("hobby.html", users=current_user)
+
+# (Automatically) List a user pair (A, B) such that they have at least one common hobby
+@views.route("/hobby_pairs")
+@login_required
+def hobby_pairs():
+    cursor = mydb.cursor()
+    query = "SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username asc) AS table1 GROUP BY A, B;"
+    result = cursor.execute(query)
+    result = cursor.fetchall()
+    mydb.commit()
+    cursor.close()
+
+    if not result:
+        flash("No pairs.", category='error')
+    else:
+        return render_template("table_hobby.html", value=result)
 
     return render_template("hobby.html", users=current_user)
 
