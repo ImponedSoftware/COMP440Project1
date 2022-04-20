@@ -13,6 +13,8 @@ class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     posts = db.relationship('Post', backref='users', passive_deletes=True)
     comments = db.relationship('Comment', backref='users', passive_deletes=True)
+    hobby = db.relationship('Hobby', backref='users', passive_deletes=True)
+    follower = db.relationship('Follower', backref='users', passive_deletes=True)
 
 # Posts table columns
 class Post(db.Model):
@@ -50,7 +52,7 @@ class Leader(db.Model):
 # Follower table column
 class Follower(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    followerName = db.Column(db.String(200), primary_key=True)
+    followerName = db.Column(db.String(200), nullable=False)
     following = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
 
 #  Hobby table column

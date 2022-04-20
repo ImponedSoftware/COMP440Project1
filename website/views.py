@@ -16,11 +16,104 @@ mydb = mysql.connector.connect(
 
 
 # Must be logged in successfully to access the home page
-@views.route('/')
-@views.route('/welcome')
+@views.route('/', methods=['GET', 'POST'])
+@views.route('/welcome', methods=['GET', 'POST'])
 @login_required
 def welcome():
     return render_template("welcome.html", users=current_user)
+
+@views.route('/add_page', methods=['GET', 'POST'])
+@login_required
+def add_page():
+    if request.method == 'POST':
+        if "Add_hobby" in request.form:
+            return redirect(url_for('views.add_hobby'))
+        elif "Add_following" in request.form:
+            return redirect(url_for('views.add_following'))
+    
+    return render_template("add_page.html", users=current_user)
+        
+# Add hobby method
+@views.route("/add_hobby", methods=['GET', 'POST'])
+@login_required
+def add_hobby():
+    if request.method == "POST":
+        # Get input and makes everything lowercase
+        hobby = request.form.get('hobbyText').lower()
+
+        # Show message if hobby is empty
+        if not hobby:
+            flash('Hobby field cannot be empty.', category='error')
+        else:
+            # Match post to user's ID
+            cursor = mydb.cursor()
+            query = "SELECT id FROM users WHERE id = %s"
+            currentUser = cursor.execute(query, [current_user.id])
+            currentUser = cursor.fetchone()[0]
+            cursor.close()
+
+            dupes = Hobby.query.filter_by(hobbyText=hobby, userId=currentUser).first()
+
+            if dupes:
+                flash('User already added this hobby.', category='error')
+            else:
+                hobbies = Hobby(hobbyText=hobby, userId=currentUser)
+                db.session.add(hobbies)
+                db.session.commit()
+
+                # Show message and redirect back to posts_main, after successfully created
+                flash('Hobby added!', category='success')
+                return redirect(url_for('views.add_page'))
+
+    return render_template('add_hobby.html', users=current_user)
+
+# Add hobby method
+@views.route("/add_following", methods=['GET', 'POST'])
+@login_required
+def add_following():
+    if request.method == "POST":
+        following_input = request.form.get('following')
+
+        # Show message if hobby is empty
+        if not following_input:
+            flash('Following field cannot be empty.', category='error')
+        else:
+            username_exist = Users.query.filter_by(username=following_input).first()
+
+            # Checks if inputted username exists or not
+            if not username_exist:
+                flash('Username does not exists.', category='error')
+
+            else:
+                # Convert 'following' input to the corresponding users' id
+                cursor = mydb.cursor()
+                query1 = "SELECT id from users WHERE username = (%s);"
+                following_id = cursor.execute(query1, (following_input, ))
+                following_id = cursor.fetchone()[0]
+                cursor.close()
+
+                # Match post to user's username
+                cursor = mydb.cursor()
+                query2 = "SELECT username FROM users WHERE id = %s"
+                currentUser = cursor.execute(query2, [current_user.id])
+                currentUser = cursor.fetchone()[0]
+                cursor.close()
+
+                dupes = Follower.query.filter_by(followerName=currentUser, following=following_id).first()
+
+                if dupes:
+                    flash('User already follows this account.', category='error')
+                else:
+                    # Add following info to the table
+                    follows = Follower(following=following_id, followerName=currentUser)
+                    db.session.add(follows)
+                    db.session.commit()
+
+                    # Show message and redirect back to posts_main, after successfully created
+                    flash('Successfully followed!', category='success')
+                    return redirect(url_for('views.add_page'))
+
+    return render_template('add_following.html', users=current_user)
 
 # ----------------------------------- Initialize DB Method -----------------------------------------------------------------------------------
 # Initialize DB Function
@@ -151,7 +244,6 @@ def posts(username):
 @views.route('tags/<text>')
 @login_required
 def tags(text):
-    tag1 = text
     posts = Post.query.all()
     pos = []
     cursor = mydb.cursor()
