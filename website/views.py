@@ -155,7 +155,8 @@ def tags(text):
     posts = Post.query.all()
     pos = []
     cursor = mydb.cursor()
-    query = "SELECT DISTINCT post.id FROM post JOIN tag ON tag.post_id = post.id WHERE post.id IN (SELECT tag.post_id FROM tag WHERE text = (%s));"
+    query = "SELECT DISTINCT tag.post_id FROM tag WHERE text = (%s);"
+    #query = "SELECT DISTINCT post.id FROM post JOIN tag ON tag.post_id = post.id WHERE post.id IN (SELECT tag.post_id FROM tag WHERE text = (%s));"
     positiveId = cursor.execute(query, (text, ))
     positiveId = cursor.fetchall()
 
