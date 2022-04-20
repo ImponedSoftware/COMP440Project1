@@ -56,7 +56,7 @@ VALUES
         ('healing', '4', '8'),
         ('healing', '11', '9'),
         ('youth', '11', '9'),
-        ('timeless, farewell', '11', '9'),
+        ('farewell', '11', '9'),
         ('heartbreak', '9', '10'),
         ('calming', '9', '10'),
         ('memories', '6', '11'),

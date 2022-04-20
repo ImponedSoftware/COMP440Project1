@@ -147,6 +147,29 @@ def posts(username):
 
     return render_template("posts.html", users=current_user, posts=posts, username=username)
 
+# This will be use to look at post from specific tag
+@views.route('tags/<text>')
+@login_required
+def tags(text):
+    tag1 = text
+    posts = Post.query.all()
+    pos = []
+    cursor = mydb.cursor()
+    query = "SELECT DISTINCT post.id FROM post JOIN tag ON tag.post_id = post.id WHERE post.id IN (SELECT tag.post_id FROM tag WHERE text = (%s));"
+    positiveId = cursor.execute(query, (text, ))
+    positiveId = cursor.fetchall()
+
+    if not positiveId:
+        flash("No post have this tag in it.", category='error')
+    else:
+        for id in positiveId:
+            pos.append(id[0])
+
+    mydb.commit()
+    cursor.close()
+
+    return render_template("tags.html", users=current_user, posts=posts, pos=pos, text=text)
+
 # ----------------------------------- Comments Methods -------------------------------------------------------------------------------------
 
 # Create comments on other posts
