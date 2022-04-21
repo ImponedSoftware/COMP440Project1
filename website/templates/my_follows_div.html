@@ -6,12 +6,10 @@
     <br />
     <div id="follows">
         {% for follow in follows %}
-        <div class="card border-dark">
+        <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <div class="card-body">
-                    <!-- Display follow.following which is an id, as their username-->
-                    <div class="card-text">{{follow.users.username}}</div>
-                </div>
+                {{follow.users.username}}
+                
                 {% if users.username == follow.followerName %}
                 <!-- Dropdown menu for users to delete their follows-->
                 <div class="dropdown">
@@ -23,6 +21,7 @@
                 </div>
                 {% endif %}
             </div>
+        </div>
         {% endfor %}
     </div>
 
@@ -30,9 +29,9 @@
     <br />
     <br />
     <div style="text-align:center;">
-        <a href="/welcome"><button type="button" class="btn btn-primary btn-lg">
-            Back
-        </button></a>
+        <a href="/welcome">
+            <button type="button" class="btn btn-primary btn-lg">Back</button>
+        </a>
     </div>
     {% endblock %}
 {% endblock %}
