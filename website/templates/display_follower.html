@@ -1,8 +1,12 @@
+{% extends "base.html" %} {% block title %}Follow{% endblock %} 
+
+{% block content %}
 <head>
 <style>
     table, th, td {
         /*border: 1px solid black;*/
         padding: 5px;
+        padding-left: 100px;
     }
     table {
       border-spacing: 15px;
@@ -12,11 +16,9 @@
 
 <br />
 <h1 style="text-align: center;">Follow</h1>
-    <br />
     <h3 style="text-align: center;">Note: Might need to refresh, if user just followed someone.</h3>
-    <br />
     <div>
-        <table style="font-size: 18pt; margin-left: auto; margin-right: auto;"> 
+        <table style="font-size: 18pt; margin-left: auto; margin-right: auto; text-align: center;"> 
             <thead> 
             <tr> 
                 <th style="text-decoration: underline;">Username</th> 
@@ -38,7 +40,8 @@
         <br />
         <div style="text-align: center;">
             <a href="/table_page"
-                ><button type="button" style="height: 30pt;" class="btn btn-primary btn-lg">Back</button></a
+                ><button type="button" class="btn btn-primary btn-lg">Back</button></a
             >
         </div>
     </div>
+{% endblock %}

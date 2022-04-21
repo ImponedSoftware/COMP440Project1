@@ -14,13 +14,56 @@ mydb = mysql.connector.connect(
     database="440_database"
 )
 
+# ----------------------------------- Welcome Page Methods -----------------------------------------------------------------------------------------
 
 # Must be logged in successfully to access the home page
 @views.route('/', methods=['GET', 'POST'])
 @views.route('/welcome', methods=['GET', 'POST'])
 @login_required
 def welcome():
+    if request.method == 'POST':
+        if "MyHobby" in request.form:
+            return redirect(url_for('views.my_hobby'))
+        elif "MyFollows" in request.form:
+            return redirect(url_for('views.my_follows'))
     return render_template("welcome.html", users=current_user)
+
+# Display current user's hobbies, and allows them to delete it
+@views.route('/my_hobby')
+@login_required
+def my_hobby():
+    hobbies = Hobby.query.filter_by(userId=current_user.id)
+    return render_template("my_hobby_main.html", users=current_user, hobbies=hobbies)
+
+@views.route("/delete-hobby/<id>")
+@login_required
+def delete_hobby(id):
+    hobby_del = Hobby.query.filter_by(id=id).first()
+
+    db.session.delete(hobby_del)
+    db.session.commit()
+    flash('Successfully deleted hobby.', category='success')
+    return redirect(url_for('views.my_hobby'))
+
+# Display current user follows, and allows them to delete it
+@views.route('my_follows')
+@login_required
+def my_follows():
+    follows = Follower.query.filter_by(followerName=current_user.username)
+    return render_template("my_follows_main.html", users=current_user, follows=follows)
+
+@views.route('/unfollow/<id>')
+@login_required
+def delete_follows(id):
+    follows_del = Follower.query.filter_by(id=id).first()
+
+    db.session.delete(follows_del)
+    db.session.commit()
+    flash('Successfully unfollowed.', category='success')
+    return redirect(url_for('views.my_follows'))
+
+
+# ----------------------------------- Add Hobby and Following Methods -----------------------------------------------------------------------------------------
 
 @views.route('/add_page', methods=['GET', 'POST'])
 @login_required
@@ -74,16 +117,17 @@ def add_following():
     if request.method == "POST":
         following_input = request.form.get('following')
 
-        # Show message if hobby is empty
+        # Show message if following is empty
         if not following_input:
             flash('Following field cannot be empty.', category='error')
         else:
-            username_exist = Users.query.filter_by(username=following_input).first()
+            username_check = Users.query.filter_by(username=following_input).first()
 
             # Checks if inputted username exists or not
-            if not username_exist:
+            if not username_check:
                 flash('Username does not exists.', category='error')
-
+            elif username_check.username == current_user.username:
+                flash('Cannot follow yourself.', category='error')
             else:
                 # Convert 'following' input to the corresponding users' id
                 cursor = mydb.cursor()
@@ -297,11 +341,11 @@ def create_comment(post_id):
     # Checks to make sure the user is not commenting on their own posts, 
     # commenting on the same post twice, or exceeds the max limit per day
     if current_user.id == current_author:
-        flash('Can not comment on your own post!', category='error')
+        flash('Cannot comment on your own post!', category='error')
     elif result > 1:
-        flash('Can not comment more than once on the same post!', category='error')
+        flash('Cannot comment more than once on the same post!', category='error')
     elif commented_today > 3:
-        flash('Can not comment more than 3 times per day!', category='error')
+        flash('Cannot comment more than 3 times per day!', category='error')
     else:
         if not text:
             flash('Comment input cannot be empty!', category='error')
@@ -332,6 +376,7 @@ def delete_comment(comment_id):
     else:
         db.session.delete(comment)
         db.session.commit()
+        flash('Comment deleted.', category='success')
     
     return redirect(url_for('views.post_main'))
 
@@ -364,7 +409,7 @@ def stats():
             if not result:
                 flash("No users has never posted a blog.", category='error')
             else:
-                return render_template("table_usernames.html", value=result)
+                return render_template("table_usernames.html", value=result, users=current_user)
                 #for results in result:
                 #    flash(results[0], category='success')
         elif "NeverComment" in request.form:
@@ -379,7 +424,7 @@ def stats():
             if not result:
                 flash("No users have never posted a comment!", category='error')
             else:
-                return render_template("table_usernames.html", value=result)
+                return render_template("table_usernames.html", value=result, users=current_user)
                 #for results in result:
                 #    flash(results[0], category='success')
         elif "Negative" in request.form:
@@ -394,7 +439,7 @@ def stats():
             if not result:
                 flash("No users only posted negative comments.", category='error')
             else:
-                return render_template("table_usernames.html", value=result)
+                return render_template("table_usernames.html", value=result, users=current_user)
                 #for results in result:
                     #flash(results[0], category='success')
         elif "noNegative" in request.form:
@@ -411,7 +456,7 @@ def stats():
             if not result:
                 flash("No blogs has only have positive comments.", category='error')
             else:
-                return render_template("table_usernames.html", value=result)
+                return render_template("table_usernames.html", value=result, users=current_user)
                 #for results in result:
                 #    flash(results[0], category='success')
     return render_template('stats.html', users=current_user)
@@ -434,7 +479,7 @@ def tags_check():
             flash("No users has created 2 or more posts, and use those tags in a post.", category='error')
         else:
             #for results in result:
-                return render_template("table_usernames.html", value=result)
+                return render_template("table_usernames.html", value=result, users=current_user)
                 #flash(results[0], category='success')
     return render_template("tags_check.html", users=current_user)
 
@@ -480,7 +525,7 @@ def blog_date():
         if not result:
             flash("No posts created on that day", category='error')
         else:
-            return render_template("table_usernames.html", value=result)
+            return render_template("table_usernames.html", value=result, users=current_user)
 
             # Or can just display as flash messages
             #for results in result:
@@ -504,7 +549,7 @@ def following_page():
         if not result:
             flash("No common leader!", category='error')
         else:
-            return render_template("table_usernames.html", value=result)
+            return render_template("table_usernames.html", value=result, users=current_user)
             #for results in result:
             #    flash(results[0], category='success')
     return render_template("following_page.html", users=current_user)
@@ -525,9 +570,9 @@ def hobby_check():
         if not result:
             flash("No users has the same hobby.", category='error')
         else:
-            return render_template("table_hobby_input.html", value=result)
+            return render_template("table_hobby_input.html", value=result, users=current_user)
 
-    return render_template("hobby.html", users=current_user)
+    return render_template("hobby_search.html", users=current_user)
 
 # (Automatically) List a user pair (A, B) such that they have at least one common hobby
 @views.route("/hobby_pairs")
@@ -543,9 +588,9 @@ def hobby_pairs():
     if not result:
         flash("No pairs.", category='error')
     else:
-        return render_template("table_hobby.html", value=result)
+        return render_template("table_hobby.html", value=result, users=current_user)
 
-    return render_template("hobby.html", users=current_user)
+    return render_template("hobby_search.html", users=current_user)
 
 # ----------------------------------- Display Table Methods -------------------------------------------------------------------------------------------
 
@@ -575,7 +620,7 @@ def hobby_table():
     if not result:
         flash("Nothing yet.", category='error')
     else:
-        return render_template("display_hobby.html", value=result)
+        return render_template("display_hobby.html", value=result, users=current_user)
 
     return render_template("display_hobby.html", users=current_user)
 
@@ -594,6 +639,6 @@ def follower_table():
     if not result:
         flash("Nothing yet.", category='error')
     else:
-        return render_template("display_follower.html", value=result)
+        return render_template("display_follower.html", value=result, users=current_user)
 
     return render_template("display_follower.html", users=current_user)

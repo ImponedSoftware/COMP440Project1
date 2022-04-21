@@ -84,18 +84,18 @@ VALUES
 -- Leader tuples
 INSERT INTO Leader(id, leaderName, leaderId) 
 VALUES 
-        ('1', 'IU', '7'),
-        ('2', 'Blackpink', '2'),
-        ('3', 'Infinite', '5'),
-        ('4', 'Carat','10'),
-        ('5', 'EXO', '4'),
-        ('6', 'IU', '7'),
-        ('7', 'IKON', '3'),
-        ('8', 'Inspirit', '6'),
-        ('9', 'Blackpink','2'),
-        ('10', 'WannaOne', '11'),
-        ('11', 'Infinite', '5'),
-        ('12', 'Carat', '10');
+        ('2', 'IU', '7'),
+        ('3', 'Blackpink', '2'),
+        ('4', 'Infinite', '5'),
+        ('5', 'Carat','10'),
+        ('6', 'EXO', '4'),
+        ('7', 'IU', '7'),
+        ('8', 'IKON', '3'),
+        ('9', 'Inspirit', '6'),
+        ('10', 'Blackpink','2'),
+        ('11', 'WannaOne', '11'),
+        ('12', 'Infinite', '5'),
+        ('13', 'Carat', '10');
 
 -- Followers
 -- IKON and Inspirit follows IU

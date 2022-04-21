@@ -1,43 +1,48 @@
-<head>
-<style>
-    table, th, td {
-        /*border: 1px solid black;*/
-        padding: 5px;
-    }
-    table {
-      border-spacing: 15px;
-    }
-</style>
-</head>
+{% extends "base.html" %} {% block title %}Hobbies{% endblock %} 
 
-<br />
-<h1 style="text-align: center;">Hobbies</h1>
-<br />
-<h3 style="text-align: center;">Note: Might need to refresh, if user just added a hobby.</h3>
-    <div>
-        <table style="font-size: 18pt; margin-left: auto; margin-right: auto;"> 
-            <thead> 
-            <tr> 
-                <th style="text-decoration: underline;">Hobbies</th> 
-                <th style="text-decoration: underline;">Usernames</th> 
-            </tr> 
-            </thead> 
-
-            <tbody> 
-                {% for row in value %}  
-                    <tr> 
-                        <td style="text-align: center;">{{row[0]}}</td> 
-                        <td style="text-align: center;">{{row[1]}}</td>
-                    </tr> 
-                {% endfor %} 
-            </tbody> 
-        </table> 
-
-        <br />
-        <br />
-        <div style="text-align: center;">
-            <a href="/table_page"
-                ><button type="button" style="height: 30pt;" class="btn btn-primary btn-lg">Back</button></a
-            >
+{% block content %}
+    <head>
+        <style>
+            table, th, td {
+                /*border: 1px solid black;*/
+                padding: 5px;
+                padding-left: 100px;
+            }
+            table {
+            border-spacing: 15px;
+            }
+        </style>
+    </head>
+    
+    <br />
+    <h1 style="text-align: center;">Hobbies</h1>
+    <h5 style="text-align: center;">Note: Might need to refresh, if user just added a hobby.</h5>
+    <br />
+        <div>
+            <table style="font-size: 18pt; margin-left: auto; margin-right: auto; text-align: center;"> 
+                <thead> 
+                <tr> 
+                    <th style="text-decoration: underline;">Hobbies</th> 
+                    <th style="text-decoration: underline;">Usernames</th> 
+                </tr> 
+                </thead> 
+    
+                <tbody> 
+                    {% for row in value %}  
+                        <tr> 
+                            <td style="text-align: center;">{{row[0]}}</td> 
+                            <td style="text-align: center;">{{row[1]}}</td>
+                        </tr> 
+                    {% endfor %} 
+                </tbody> 
+            </table> 
+    
+            <br />
+            <br />
+            <div style="text-align: center;">
+                <a href="/table_page"
+                    ><button type="button" class="btn btn-primary btn-lg">Back</button></a
+                >
+            </div>
         </div>
-    </div>
+{% endblock %}

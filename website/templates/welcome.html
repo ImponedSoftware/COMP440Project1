@@ -3,6 +3,25 @@
 {%block content %}
     <br />
     <h1 style="text-align: center;">Welcome {{users.username}}!</h1>
+    <br />
+    <div style="text-align: center;">
+    <form method="POST">
+        <input
+        type="submit"
+        name="MyHobby"
+        class="btn btn-primary btn-lg"
+        value="My Hobbies"
+        />
+        <br />
+        <br />
+        <input
+        type="submit"
+        name="MyFollows"
+        class="btn btn-primary btn-lg"
+        value="My Follows"
+        />
+    </form>
+    </div>
     <!-- <h6>This is an ER Diagram for our project:</h6>
     <br />
     <p style="text-align: center;">
