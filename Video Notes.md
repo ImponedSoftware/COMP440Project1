@@ -13,4 +13,4 @@ Recording:
     And show that there's an error message when we try creating the 3rd post
 6) Comments on 3 different posts with different sentiments (positive/negative)
     And in between the 3 comments, show that we cannot comment on our own post and cannot comment on the same post twice, error messages
-7) Show that users can view comments under each posts by clicking on the 'Show X messages. And hiding it by clicking the same thing
+7) Show that users can view comments under each posts by clicking on the 'Show X' messages. And hiding it by clicking the same thing
