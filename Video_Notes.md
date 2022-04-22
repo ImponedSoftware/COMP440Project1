@@ -22,11 +22,14 @@ Recording:
             'Show All Possible Pairs' method is self-generated
     f) The last 4 queries are self-generated
 3) Extras:
-    a) Add Tab: To add input into the database
+    a) Posts Tab:
+        - Clicking on an username would display all posts that they have
+        - Clicking on tags would display all posts with that tag
+    b) Add Tab: To add input into the database
         - Add a hobby: will show error if the input has already been added by the user
         - Follow another account: check for dupes, cannot follow yourself
-    b) Welcome Tab:
+    c) Welcome Tab:
         - Can view own hobbies/following, and can delete each if wanted to
-    c) Tables Tab:
+    d) Tables Tab:
         - Can view all the data of hobbies/following, group neatly
         - Might have to refresh page, if newest input is not displayed
