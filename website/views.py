@@ -490,7 +490,7 @@ def allPositive():
     posts = Post.query.all()
     pos = []
     cursor = mydb.cursor()
-    query = "SELECT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive');"
+    query = "SELECT DISTINCT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive');"
     positiveId = cursor.execute(query)
     positiveId = cursor.fetchall()
 
