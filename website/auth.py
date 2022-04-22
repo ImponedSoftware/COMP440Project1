@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import Users
+from .models import Leader, Users
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
@@ -82,6 +82,11 @@ def sign_up():
             # '.add' and '.commit' is part of SQLALCHEMY safe commands to prevent SQL Injection
             db.session.add(new_user)
             db.session.commit()
+
+            leader = Leader(leaderName=username, leaderId=new_user.id)
+            db.session.add(leader)
+            db.session.commit()
+            
             # User stays logged in, until they actually wants to logout
             login_user(new_user, remember=True)
             flash('Account created!', category='success')

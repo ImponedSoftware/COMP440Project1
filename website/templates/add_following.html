@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title %}Follow An Account{% endblock %} {% block content
+    %}
+    <br />
+    <h1 style="text-align: center;">Follow</h1>
+    <br />
+    <form method="POST">
+      <textarea
+        placeholder="Input one username to follow"
+        name="following"
+        id="following"
+        class="form-control"
+      ></textarea>
+      <br />
+      <div style="text-align: center;">
+        <button type="submit" class="btn btn-lg btn-primary">Add</button>
+      </div>
+    </form>
+    <br />
+    <div style="text-align: center;">
+      <a href="/add_page"
+        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
+      >
+    </div>
+{%endblock %}

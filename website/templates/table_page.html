@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+
+{% block content%}
+<br />
+<h1 style="text-align: center;">Tables</h1>
+<br />
+<div style="text-align: center;">
+  <form method="POST">
+    <input
+      type="submit"
+      name="Hobby"
+      class="btn btn-primary btn-lg"
+      value="Display hobby table"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Follow"
+      class="btn btn-primary btn-lg"
+      value="Display following table"
+    />
+  </form>
+</div>
+{%endblock %}

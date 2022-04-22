@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}Add Hobby{% endblock %} {% block content
+    %}
+    <br />
+    <h1 style="text-align: center;">Add Hobby</h1>
+    <br />
+    <br />
+    <form method="POST">
+      <textarea
+        placeholder="Add One Hobby"
+        name="hobbyText"
+        id="hobbyText"
+        class="form-control"
+      ></textarea>
+      <br />
+      <div style="text-align: center;">
+        <button type="submit" class="btn btn-lg btn-primary">Add</button>
+      </div>
+    </form>
+    <br />
+    <div style="text-align: center;">
+      <a href="/add_page"
+        ><button type="button" class="btn btn-lg btn-secondary">Back</button></a
+      >
+    </div>
+    {%endblock %}
+    

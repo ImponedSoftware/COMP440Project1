@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block title %}My Follows{% endblock %} 
+
+{% block content %}
+    <br />
+    <h1 style="text-align: center;">{%block header%}My Follows{%endblock%}</h1>
+    <br />
+    <div id="follows">
+        {% for follow in follows %}
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                {{follow.users.username}}
+                
+                {% if users.username == follow.followerName %}
+                <!-- Dropdown menu for users to delete their follows-->
+                <div class="dropdown">
+                    <button class="btn btn-primary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="/unfollow/{{follow.id}}">Unfollow</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% block footer %}
+    <br />
+    <br />
+    <div style="text-align:center;">
+        <a href="/welcome">
+            <button type="button" class="btn btn-primary btn-lg">Back</button>
+        </a>
+    </div>
+    {% endblock %}
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} 
+
+{% block content%}
+<br />
+<h1 style="text-align: center;">Queries</h1>
+<br />
+<div style="text-align: center;">
+  <form method="POST">
+    <input
+      type="submit"
+      name="TagsCheck"
+      class="btn btn-primary btn-lg"
+      value="List the users who post at least two blogs, one has a tag of “X”, and another has a tag of “Y”"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Positive"
+      class="btn btn-primary btn-lg"
+      value="List all the blogs of user X, such that all the comments are positive for these blogs"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Date"
+      class="btn btn-primary btn-lg"
+      value="List the users who posted the most number of blogs on (YYYY-MM-DD)"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Follow"
+      class="btn btn-primary btn-lg"
+      value="List the users who are followed by both X and Y"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Hobby"
+      class="btn btn-primary btn-lg"
+      value="List a user pair (A, B) such that they have at least one common hobby"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="NeverBlog"
+      class="btn btn-primary btn-lg"
+      value="Display all the users who never posted a blog"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="NeverComment"
+      class="btn btn-primary btn-lg"
+      value="Display all the users who never posted a comment"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="Negative"
+      class="btn btn-primary btn-lg"
+      value="Display those users who posted some comments, but each of them are negative"
+    />
+    <br />
+    <br />
+    <input
+      type="submit"
+      name="noNegative"
+      class="btn btn-primary btn-lg"
+      value="Display those users such that all the blogs they posted so far never recieved any negative comments"
+    />
+  </form>
+</div>
+{%endblock %}
