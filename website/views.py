@@ -513,7 +513,9 @@ def blog_date():
         date = request.form.get('date')
         print(date)
         cursor = mydb.cursor()
-        query = "SELECT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy, RANK() OVER(ORDER BY COUNT(post.id) DESC) AS ranked FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy ORDER BY ranked) AS myTable WHERE ranked = 1;"
+        #query = "SELECT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy, RANK() OVER(ORDER BY COUNT(post.id) DESC) AS ranked FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy ORDER BY ranked) AS myTable WHERE ranked = 1;"
+        # Simpler query
+        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable;"
         params = [date]
         result = cursor.execute(query, params)
         result = cursor.fetchall()
@@ -579,6 +581,8 @@ def hobby_check():
 def hobby_pairs():
     cursor = mydb.cursor()
     query = "WITH cte AS (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM cte GROUP BY A, B;"
+    # Same query but messier
+    # query = "SELECT A, B, GROUP_CONCAT(same_hobby separator ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) AS table1 GROUP BY A, B;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()

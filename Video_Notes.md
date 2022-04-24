@@ -7,10 +7,13 @@ Before Recording:
 Recording:
 1) Login
 2) Show each query in the Stats page
+    NOTE: do not put a space after the input(s)
     a) Input tags: 'heartbreak' and 'calming' to return actual results. 
         Any others should return a red flash message
     b) Postive Comments is self-generated
     c) Input Date: 2022-05-01 as stated in the Project PDF
+        - Can try other dates after, like: '2022-05-03', '2022-04-02', '2022-03-06'
+        - Some other dates should show errors, as it has not post
     d) Choose from any of these:
         -- EXO and WannaOne (follows Infinite and Carat)
         -- EXO and Carat (follows Blackpink)
