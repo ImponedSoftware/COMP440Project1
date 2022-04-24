@@ -2,7 +2,7 @@ Before Recording:
 1) Drop the current 440_database on MYSQL Workbench (if any), by running the create_db.py file by itself
 2) Create only ONE new user account, where username = 'comp440' and password = 'pass1234'. Since ids 2 through 11 will be taken already when we clicked the "Initialize DB" button
 3) Initialize database first
-4) Might need do the note on views.py, line 334 to be sure it doesn't cause issues during recording
+4) Might need do the note on views.py, line 332 to be sure it doesn't cause issues during recording
 
 Recording:
 1) Login
