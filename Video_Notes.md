@@ -8,8 +8,13 @@ Recording:
 1) Login
 2) Show each query in the Stats page
     NOTE: do not put a space after the input(s)
-    a) Input tags: 'heartbreak' and 'calming' to return actual results. 
-        Any others should return a red flash message
+    a) Input tags options: 
+        - 'healing' and 'calming' to return 'EXO'
+        - 'pretty' and 'heartbreak' to return 'Seventeen'
+        - 'pretty' and 'calming' to return 'Seventeen'
+        - 'attacca' and 'heartbreak' to return 'Seventeen'
+        - 'attacca' and 'calming' to return 'Seventeen'
+        Any others should return a red flash message, especially 'heartbreak' and 'calming' since it is from the same post
     b) Postive Comments is self-generated
     c) Input Date: 2022-05-01 as stated in the Project PDF
         - Can try other dates after, like: '2022-05-03', '2022-04-02', '2022-03-06'

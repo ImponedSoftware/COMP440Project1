@@ -36,8 +36,6 @@ VALUES
 --    'ballad' on post_id 4
 --    'OST' on post_id 3, 8
 --    'healing' on post_id 4, 8, 9
---    'heartbreak' and 'calming' on post_id 7, 10 (from IKON, EXO, and Seventeen)
---     Query #1 only returns EXO and Seventeen for tags: 'heartbreak' and 'calming'
 INSERT INTO tag(text, author, post_id)
 VALUES
         ('29', '7', '2'),
@@ -60,7 +58,8 @@ VALUES
         ('heartbreak', '9', '10'),
         ('calming', '9', '10'),
         ('memories', '6', '11'),
-        ('pretty', '9', '12');
+        ('pretty', '9', '12'),
+        ('attacca', '9', '12');
 
 -- Random comments being added to different posts
 -- Post_id with comments: 3, 4, 5, 7, 9, 10, 11
@@ -84,18 +83,18 @@ VALUES
 -- Leader tuples
 INSERT INTO Leader(id, leaderName, leaderId) 
 VALUES 
-        ('2', 'IU', '7'),
-        ('3', 'Blackpink', '2'),
-        ('4', 'Infinite', '5'),
-        ('5', 'Carat','10'),
-        ('6', 'EXO', '4'),
-        ('7', 'IU', '7'),
-        ('8', 'IKON', '3'),
-        ('9', 'Inspirit', '6'),
-        ('10', 'Blackpink','2'),
-        ('11', 'WannaOne', '11'),
-        ('12', 'Infinite', '5'),
-        ('13', 'Carat', '10');
+        ('3', 'IU', '7'),
+        ('4', 'Blackpink', '2'),
+        ('5', 'Infinite', '5'),
+        ('6', 'Carat','10'),
+        ('7', 'EXO', '4'),
+        ('8', 'IU', '7'),
+        ('9', 'IKON', '3'),
+        ('10', 'Inspirit', '6'),
+        ('11', 'Blackpink','2'),
+        ('12', 'WannaOne', '11'),
+        ('13', 'Infinite', '5'),
+        ('14', 'Carat', '10');
 
 -- Followers
 -- IKON and Inspirit follows IU
