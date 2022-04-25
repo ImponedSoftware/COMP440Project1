@@ -8,8 +8,9 @@ Recording:
 1) Login
 2) Show each query in the Stats page
     NOTE: do not put a space after the input(s)
-    a) Input tags options: 
+    a) Input tags options: (Return users that used the 2 tags in DIFFERENT posts)
         - 'healing' and 'calming' to return 'EXO'
+        - 'OST' and 'calming' to return 'EXO'
         - 'pretty' and 'heartbreak' to return 'Seventeen'
         - 'pretty' and 'calming' to return 'Seventeen'
         - 'attacca' and 'heartbreak' to return 'Seventeen'
