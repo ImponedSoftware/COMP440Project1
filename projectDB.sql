@@ -83,16 +83,16 @@ VALUES
 -- Leader tuples
 INSERT INTO Leader(id, leaderName, leaderId) 
 VALUES 
-        ('3', 'IU', '7'),
-        ('4', 'Blackpink', '2'),
-        ('5', 'Infinite', '5'),
-        ('6', 'Carat','10'),
-        ('7', 'EXO', '4'),
-        ('8', 'IU', '7'),
-        ('9', 'IKON', '3'),
-        ('10', 'Inspirit', '6'),
-        ('11', 'WannaOne', '11'),
-        ('12', 'Carat', '10');
+        ('3', 'Blackpink', '3'),
+        ('4', 'IKON', '4'),
+        ('5', 'EXO', '5'),
+        ('6', 'Infinite', '6'),
+        ('7', 'Inspirit', '7'),
+        ('8', 'IU', '8'),
+        ('9', 'Ueana', '9'),
+        ('10', 'Seventeen', '10'),
+        ('11', 'Carat', '11'),
+        ('12', 'WannaOne', '12');
 
 -- Followers
 -- IKON and Inspirit follows IU
@@ -103,18 +103,18 @@ VALUES
 -- WannaOne follows Infinite and Carat
 INSERT INTO Follower(id, followerName, following)
 VALUES
-        ('1', 'IKON','7'),
-        ('2', 'EXO', '2'),
-        ('3', 'EXO', '5'),
-        ('4', 'EXO', '10'),
-        ('5', 'Infinite', '4'),
-        ('6', 'Inspirit', '7'),
-        ('7', 'Seventeen', '3'), 
-        ('8', 'Seventeen', '6'),
-        ('9', 'Carat', '2'),
-        ('10', 'Carat', '11'),
-        ('11', 'WannaOne', '5'),
-        ('12', 'WannaOne', '10');
+        ('1', 'IKON','8'),
+        ('2', 'EXO', '3'),
+        ('3', 'EXO', '6'),
+        ('4', 'EXO', '11'),
+        ('5', 'Infinite', '5'),
+        ('6', 'Inspirit', '8'),
+        ('7', 'Seventeen', '4'), 
+        ('8', 'Seventeen', '7'),
+        ('9', 'Carat', '3'),
+        ('10', 'Carat', '12'),
+        ('11', 'WannaOne', '6'),
+        ('12', 'WannaOne', '11');
 
 -- Hobbies
 -- 'knitting': IKON
