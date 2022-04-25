@@ -91,10 +91,8 @@ VALUES
         ('7', 'IU', '7'),
         ('8', 'IKON', '3'),
         ('9', 'Inspirit', '6'),
-        ('10', 'Blackpink','2'),
-        ('11', 'WannaOne', '11'),
-        ('12', 'Infinite', '5'),
-        ('13', 'Carat', '10');
+        ('10', 'WannaOne', '11'),
+        ('11', 'Carat', '10');
 
 -- Followers
 -- IKON and Inspirit follows IU
