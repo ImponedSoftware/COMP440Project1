@@ -389,7 +389,7 @@ def stats():
         if "TagsCheck" in request.form:
             return redirect(url_for('views.tags_check'))
         elif "Positive" in request.form:
-            return redirect(url_for('views.allPositive'))
+            return redirect(url_for('views.allPositive_input'))
         elif "Date" in request.form:
             return redirect(url_for('views.blog_date'))
         elif "Follow" in request.form:
@@ -482,6 +482,37 @@ def tags_check():
     return render_template("tags_check.html", users=current_user)
 
 # List all the blogs of user X, such that all the comments are positive for these blogs
+@views.route("/allPositiveInput", methods=['GET','POST'])
+@login_required
+def allPositive_input():
+    if request.method == 'POST':
+        posts = Post.query.all()
+        name = request.form.get('name')
+        pos = []
+        cursor = mydb.cursor()
+        query = "SELECT DISTINCT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive') AND post.createdBy = (%s);"
+        positiveId = cursor.execute(query, (name, ))
+        positiveId = cursor.fetchall()
+
+        username_check = Users.query.filter_by(username=name).first()
+
+        # Checks if inputted username exists or not
+        if not username_check:
+            flash('Username does not exists.', category='error')
+        elif not positiveId:
+                flash("None of this user's posts has only positive comments.",  category='error')
+        else:
+                for id in positiveId:
+                    pos.append(id[0])
+                
+                return render_template("allPositive_input.html", users=current_user, posts=posts, pos=pos, username_input=username_check)
+
+        mydb.commit()
+        cursor.close()
+
+    return render_template("allPositive_search.html", users=current_user)
+
+# Automatic - List all the blogs of user X, such that all the comments are positive for these blogs
 @views.route("/allPositive", methods=['GET','POST'])
 @login_required
 def allPositive():

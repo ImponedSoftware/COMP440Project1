@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title %} Home{% endblock %} {% block content
 %}
 <br />
-<h1 style="text-align: center;">{%block header%}All Posts With Only Positive Comments{%endblock%}</h1>
+<h1 style="text-align: center;">{%block header%}{{username_input.username}}'s Posts With Only Positive Comments{%endblock%}</h1>
 <br />
 <div id="posts">
   {% for post in posts %}
