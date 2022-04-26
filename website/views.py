@@ -461,7 +461,6 @@ def stats():
     return render_template('stats.html', users=current_user)
 
 # List the users who post at least two blogs, one has a tag of “X”, and another has a tag of “Y”
-# Demo: Should only display EXO and Seventeen for the tags (heartbreak and calming)
 @views.route("/tags_check", methods=['GET','POST'])
 @login_required
 def tags_check():
@@ -469,13 +468,13 @@ def tags_check():
         tag1 = request.form.get('tag1')
         tag2 = request.form.get('tag2')
         cursor = mydb.cursor()
-        query = "SELECT DISTINCT username FROM users INNER JOIN tag a ON a.author = users.id INNER JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) from post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
+        query = "SELECT DISTINCT username FROM users INNER JOIN tag a ON a.author = users.id INNER JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.post_id != b.post_id AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) from post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
         result = cursor.execute(query, (tag1, tag2))
         result = cursor.fetchall()
         mydb.commit()
         cursor.close()
         if not result:
-            flash("No users has created 2 or more posts, and use those tags in a post.", category='error')
+            flash("No users has created 2 or more posts, and use those tags in different posts.", category='error')
         else:
             #for results in result:
                 return render_template("table_usernames.html", value=result, users=current_user)
@@ -580,9 +579,9 @@ def hobby_check():
 @login_required
 def hobby_pairs():
     cursor = mydb.cursor()
-    query = "WITH cte AS (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM cte GROUP BY A, B;"
+    #query = "WITH cte AS (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM cte GROUP BY A, B;"
     # Same query but messier
-    # query = "SELECT A, B, GROUP_CONCAT(same_hobby separator ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) AS table1 GROUP BY A, B;"
+    query = "SELECT A, B, GROUP_CONCAT(same_hobby separator ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) AS table1 GROUP BY A, B;"
     result = cursor.execute(query)
     result = cursor.fetchall()
     mydb.commit()
