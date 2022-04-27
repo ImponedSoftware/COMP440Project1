@@ -27,9 +27,9 @@ VALUES
         (7, 'Love Scenario', 'We were in love. We met and became a memory that cannot be erased. It was a commendable melodrama.', '2022-03-31', 'IKON', '4'),
         (8, 'With You', 'If this is a dream, please let me wake up.', '2022-04-02', 'EXO', '5'), 
         (9, 'Beautiful', 'I was young, I did not know I would be like this. I thought it was a given back then.', '2022-04-26', 'WannaOne', '12'),
-        (10, "Don't Wanna Cry", 'The path that used to be familiar, it is now unfamiliar. Is this the path I know? I ask myself.', '2022-05-01', 'Seventeen', '10'),
-        (11, 'Voice of My Heart', 'I call out without sound. I call out remembering you.', '2022-05-01', 'Inspirit', '7'),
-        (12, 'To You', 'You have placed all of the smiles in the world in my hands.', '2022-05-03', 'Seventeen', '10');
+        (10, "Don't Wanna Cry", 'The path that used to be familiar, it is now unfamiliar. Is this the path I know? I ask myself.', '2022-04-26', 'Seventeen', '10'),
+        (11, 'Voice of My Heart', 'I call out without sound. I call out remembering you.', '2022-04-27', 'Inspirit', '7'),
+        (12, 'To You', 'You have placed all of the smiles in the world in my hands.', '2022-04-27', 'Seventeen', '10');
 
 -- Random tags being added to different posts
 -- Dupe Tags: 
@@ -76,8 +76,8 @@ VALUES
         ('negative', 'I guess some people just do not know what they are missing.','2022-04-05', '3', '7'),
         ('positive', 'This is totally unrelated, but I just wanted to say I was a HUGE fan of this song~!', '2022-04-27', '9', '6'),
         ('positive', 'Have you checked out their other albums?! I believe that they would have been in the top 3.','2022-04-27', '9', '9'),
-        ('negative', 'I was hoping that comeback would be more of a dance title track, not a sad song.','2022-05-02', '10', '8'),
-        ('positive', 'I was expecting something else, but this is good enough.','2022-05-03', '11', '6'),
+        ('negative', 'I was hoping that comeback would be more of a dance title track, not a sad song.','2022-04-27', '10', '8'),
+        ('positive', 'I was expecting something else, but this is good enough.','2022-04-27', '11', '6'),
         ('negative', 'Who? Did she really stayed single though? I remembered she dated someone else soon after this was released.', '2022-04-15', '5', '4');
 
 -- Leader tuples
