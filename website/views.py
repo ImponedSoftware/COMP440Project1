@@ -326,20 +326,21 @@ def create_comment(post_id):
     cursor.execute(query2, [current_user.id])
     commented_today = cursor.fetchone()[0] + 1
     
+    # Can un-comment line 331, 332, 334 and edit 343...IF postID_check doesn't work
     # Query to select DISTINCT author relating to the post.id
-    query3 = "SELECT DISTINCT post.author FROM post WHERE post.id = %s"
-    cursor.execute(query3, [post_id])
+    #query3 = "SELECT DISTINCT post.author AS author FROM post WHERE post.id = %s"
+    #cursor.execute(query3, [post_id])
     # Note: If the line below is giving issues, just copy, delete, and paste it
-    current_author = cursor.fetchone()[0]
+    #current_author = cursor.fetchone()[0]
     mydb.commit()
     cursor.close()
 
-    print(current_user.id)
-    print(result)
+    # Take post_id from URL to use and get the Post from it, so we can check if it is the current user
+    postID_check = Post.query.filter_by(id=post_id).first()
 
     # Checks to make sure the user is not commenting on their own posts, 
     # commenting on the same post twice, or exceeds the max limit per day
-    if current_user.id == current_author:
+    if current_user.username == postID_check.createdBy:
         flash('Cannot comment on your own post!', category='error')
     elif result > 1:
         flash('Cannot comment more than once on the same post!', category='error')
@@ -389,7 +390,7 @@ def stats():
         if "TagsCheck" in request.form:
             return redirect(url_for('views.tags_check'))
         elif "Positive" in request.form:
-            return redirect(url_for('views.allPositive'))
+            return redirect(url_for('views.allPositive_input'))
         elif "Date" in request.form:
             return redirect(url_for('views.blog_date'))
         elif "Follow" in request.form:
@@ -482,6 +483,37 @@ def tags_check():
     return render_template("tags_check.html", users=current_user)
 
 # List all the blogs of user X, such that all the comments are positive for these blogs
+@views.route("/allPositiveInput", methods=['GET','POST'])
+@login_required
+def allPositive_input():
+    if request.method == 'POST':
+        posts = Post.query.all()
+        name = request.form.get('name')
+        pos = []
+        cursor = mydb.cursor()
+        query = "SELECT DISTINCT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive') AND post.createdBy = (%s);"
+        positiveId = cursor.execute(query, (name, ))
+        positiveId = cursor.fetchall()
+
+        username_check = Users.query.filter_by(username=name).first()
+
+        # Checks if inputted username exists or not
+        if not username_check:
+            flash('Username does not exists.', category='error')
+        elif not positiveId:
+                flash("None of this user's posts has only positive comments.",  category='error')
+        else:
+                for id in positiveId:
+                    pos.append(id[0])
+                
+                return render_template("allPositive_input.html", users=current_user, posts=posts, pos=pos, username_input=username_check)
+
+        mydb.commit()
+        cursor.close()
+
+    return render_template("allPositive_search.html", users=current_user)
+
+# Automatic - List all the blogs of user X, such that all the comments are positive for these blogs
 @views.route("/allPositive", methods=['GET','POST'])
 @login_required
 def allPositive():
@@ -512,11 +544,19 @@ def blog_date():
         date = request.form.get('date')
         print(date)
         cursor = mydb.cursor()
+
+        # Query using RANK() OVER
         #query = "SELECT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy, RANK() OVER(ORDER BY COUNT(post.id) DESC) AS ranked FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy ORDER BY ranked) AS myTable WHERE ranked = 1;"
-        # Simpler query
-        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable;"
-        params = [date]
-        result = cursor.execute(query, params)
+        #params = [date]
+        #result = cursor.execute(query, params)
+
+        # Query for when max 2 posts per day made by an user
+        #query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= 2;"
+        #result = cursor.execute(query, params)
+
+        # Longer query
+        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= (SELECT MAX(numBlogs) AS maxNumBlogs FROM (SELECT COUNT(post.id) AS numBlogs, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS t);"
+        result = cursor.execute(query, (date, date))
         result = cursor.fetchall()
         mydb.commit()
         cursor.close()
