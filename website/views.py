@@ -544,11 +544,19 @@ def blog_date():
         date = request.form.get('date')
         print(date)
         cursor = mydb.cursor()
+
+        # Query using RANK() OVER
         #query = "SELECT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy, RANK() OVER(ORDER BY COUNT(post.id) DESC) AS ranked FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy ORDER BY ranked) AS myTable WHERE ranked = 1;"
-        # Simpler query
-        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable;"
-        params = [date]
-        result = cursor.execute(query, params)
+        #params = [date]
+        #result = cursor.execute(query, params)
+
+        # Query for when max 2 posts per day made by an user
+        #query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= 2;"
+        #result = cursor.execute(query, params)
+
+        # Longer query
+        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= (SELECT MAX(numBlogs) AS maxNumBlogs FROM (SELECT COUNT(post.id) AS numBlogs, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS t);"
+        result = cursor.execute(query, (date, date))
         result = cursor.fetchall()
         mydb.commit()
         cursor.close()
