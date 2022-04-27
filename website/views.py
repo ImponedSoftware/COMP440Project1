@@ -326,20 +326,21 @@ def create_comment(post_id):
     cursor.execute(query2, [current_user.id])
     commented_today = cursor.fetchone()[0] + 1
     
+    # Can un-comment line 331, 332, 334 and edit 343...IF postID_check doesn't work
     # Query to select DISTINCT author relating to the post.id
-    query3 = "SELECT DISTINCT post.author FROM post WHERE post.id = %s"
-    cursor.execute(query3, [post_id])
+    #query3 = "SELECT DISTINCT post.author AS author FROM post WHERE post.id = %s"
+    #cursor.execute(query3, [post_id])
     # Note: If the line below is giving issues, just copy, delete, and paste it
-    current_author = cursor.fetchone()[0]
+    #current_author = cursor.fetchone()[0]
     mydb.commit()
     cursor.close()
 
-    print(current_user.id)
-    print(result)
+    # Take post_id from URL to use and get the Post from it, so we can check if it is the current user
+    postID_check = Post.query.filter_by(id=post_id).first()
 
     # Checks to make sure the user is not commenting on their own posts, 
     # commenting on the same post twice, or exceeds the max limit per day
-    if current_user.id == current_author:
+    if current_user.username == postID_check.createdBy:
         flash('Cannot comment on your own post!', category='error')
     elif result > 1:
         flash('Cannot comment more than once on the same post!', category='error')
