@@ -400,7 +400,10 @@ def stats():
         elif "NeverBlog" in request.form:
             # Display all the users who never posted a blog
             cursor = mydb.cursor()
-            query = "SELECT users.username FROM users LEFT JOIN post ON post.author = users.id WHERE post.author IS NULL;"
+            # Nested Query
+            query = "SELECT users.username FROM users WHERE users.username NOT IN (SELECT post.createdBy FROM post);"
+            # LEFT JOIN Query
+            # query = "SELECT users.username FROM users LEFT JOIN post ON post.author = users.id WHERE post.author IS NULL;"
             result = cursor.execute(query)
             result = cursor.fetchall()
             mydb.commit()
@@ -415,7 +418,10 @@ def stats():
         elif "NeverComment" in request.form:
             # Display all the users who never posted a comment
             cursor = mydb.cursor()
-            query = "SELECT users.username FROM users LEFT JOIN comment ON comment.author = users.id WHERE comment.author IS NULL;"
+            # Nested Query
+            query = "SELECT users.username FROM users WHERE users.id NOT IN (SELECT comment.author FROM comment);"
+            # LEFT JOIN Query
+            # query = "SELECT users.username FROM users LEFT JOIN comment ON comment.author = users.id WHERE comment.author IS NULL;"
             result = cursor.execute(query)
             result = cursor.fetchall()
             mydb.commit()
@@ -430,6 +436,9 @@ def stats():
         elif "Negative" in request.form:
             # Display those users who posted some comments, but each of them are negative
             cursor = mydb.cursor()
+            # Cross Product Query
+            #query = "SELECT users.username FROM users, comment a WHERE a.author = users.id AND a.author NOT IN (SELECT b.author FROM comment b WHERE b.sentiment = 'positive');"
+            # JOIN Query
             query = "SELECT users.username FROM users JOIN comment a ON a.author = users.id WHERE a.author NOT IN (SELECT b.author FROM comment b WHERE b.sentiment = 'positive');"
             result = cursor.execute(query)
             result = cursor.fetchall()
@@ -445,6 +454,9 @@ def stats():
         elif "noNegative" in request.form:
             # Display those users such that all the blogs they posted so far never recieved any negative comments
             cursor = mydb.cursor()
+            # Cross Product Query
+            #query = "SELECT DISTINCT post.createdBy FROM post WHERE post.createdBy NOT IN (SELECT post.createdBy FROM comment, post WHERE comment.post_id = post.id AND comment.sentiment = 'negative' GROUP BY post.createdBy) OR post.id = NULL;"
+            # Nested Query with RIGHT JOIN
             query = "SELECT DISTINCT post.createdBy FROM post WHERE post.createdBy NOT IN (SELECT post.createdBy FROM comment RIGHT JOIN post ON comment.post_id = post.id WHERE comment.sentiment LIKE 'negative' GROUP BY post.createdBy) OR post.id = NULL;"
             result = cursor.execute(query)
             result = cursor.fetchall()
@@ -469,7 +481,10 @@ def tags_check():
         tag1 = request.form.get('tag1')
         tag2 = request.form.get('tag2')
         cursor = mydb.cursor()
-        query = "SELECT DISTINCT username FROM users INNER JOIN tag a ON a.author = users.id INNER JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.post_id != b.post_id AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) from post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
+        # Cross Product Query
+        query = "SELECT DISTINCT username FROM users, tag a, tag b WHERE a.author = users.id AND b.author = users.id AND (a.post_id != b.post_id AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) FROM post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
+        # INNER JOIN Query
+        #query = "SELECT DISTINCT username FROM users INNER JOIN tag a ON a.author = users.id INNER JOIN tag b ON b.author = users.id WHERE (a.author = b.author AND a.post_id != b.post_id AND a.text = (%s) AND b.text = (%s)) AND EXISTS (SELECT COUNT(post.author) FROM post WHERE post.author = users.id GROUP BY author HAVING count(*) >= 2);"
         result = cursor.execute(query, (tag1, tag2))
         result = cursor.fetchall()
         mydb.commit()
@@ -491,6 +506,9 @@ def allPositive_input():
         name = request.form.get('name')
         pos = []
         cursor = mydb.cursor()
+        # Cross Product Query
+        # query = "SELECT DISTINCT post.id FROM post, comment WHERE comment.post_id = post.id AND post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive') AND post.createdBy = (%s);"
+        # JOIN Query
         query = "SELECT DISTINCT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive') AND post.createdBy = (%s);"
         positiveId = cursor.execute(query, (name, ))
         positiveId = cursor.fetchall()
@@ -520,6 +538,9 @@ def allPositive():
     posts = Post.query.all()
     pos = []
     cursor = mydb.cursor()
+    # Cross Product Query
+    #query = "SELECT DISTINCT post.id FROM post, comment WHERE comment.post_id = post.id AND post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive');"
+    # JOIN Query
     query = "SELECT DISTINCT post.id FROM post JOIN comment ON comment.post_id = post.id WHERE post.id IN (SELECT comment.post_id FROM comment WHERE sentiment = 'positive');"
     positiveId = cursor.execute(query)
     positiveId = cursor.fetchall()
@@ -554,9 +575,15 @@ def blog_date():
         #query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= 2;"
         #result = cursor.execute(query, params)
 
-        # Longer query
-        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= (SELECT MAX(numBlogs) AS maxNumBlogs FROM (SELECT COUNT(post.id) AS numBlogs, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS t);"
-        result = cursor.execute(query, (date, date))
+        # Uses 2 queries: 
+        # max_query returns the max total number of blogs made by an user on the inputted date
+        # query returns the username(s) that posted the max number of posts
+        max_query = "SELECT MAX(numBlogs) AS maxNumBlogs FROM (SELECT COUNT(post.id) AS numBlogs, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS t;"
+        max_result = cursor.execute(max_query, (date, ))
+        max_result = cursor.fetchone()[0]
+
+        query = "SELECT DISTINCT myTable.createdBy FROM (SELECT COUNT(post.id) AS counted, post.createdBy FROM post WHERE dateCreatedOn = (%s) GROUP BY post.createdBy) AS myTable WHERE myTable.counted >= (%s);"
+        result = cursor.execute(query, (date, max_result))
         result = cursor.fetchall()
         mydb.commit()
         cursor.close()
@@ -580,6 +607,9 @@ def following_page():
         followerone = request.form.get('followerone')
         followertwo = request.form.get('followertwo')
         cursor = mydb.cursor()
+        # Cross Product Query
+        #query = "SELECT DISTINCT leader.leaderName FROM leader, follower a, follower b WHERE (a.following = leader.leaderId AND b.following = leader.leaderId) AND (a.followername = (%s) AND b.followername = (%s)) AND (a.followername > b.followername OR a.followername < b.followername);"
+        # JOIN Query
         query = "SELECT DISTINCT leader.leaderName FROM leader JOIN follower a ON a.following = leader.leaderId JOIN follower b ON b.following = leader.leaderId WHERE (a.following = b.following AND a.followername = (%s) AND b.followername = (%s)) AND (a.followername > b.followername OR a.followername < b.followername);"
         result = cursor.execute(query, (followerone, followertwo))
         result = cursor.fetchall()
@@ -620,7 +650,7 @@ def hobby_check():
 def hobby_pairs():
     cursor = mydb.cursor()
     #query = "WITH cte AS (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) SELECT A, B, GROUP_CONCAT(same_hobby SEPARATOR ', ') AS Common_hobby FROM cte GROUP BY A, B;"
-    # Same query but messier
+    # Same query without using cte
     query = "SELECT A, B, GROUP_CONCAT(same_hobby separator ', ') AS Common_hobby FROM (SELECT a.username A, b.username B, h2.hobbyText AS same_hobby FROM users a INNER JOIN users b INNER JOIN hobby h1 INNER JOIN hobby h2 ON h2.userId > h1.userId AND h2.hobbyText = h1.hobbyText WHERE a.id=h1.userId AND b.id=h2.userId GROUP BY a.username, b.username, h2.hobbyText HAVING COUNT(*) >= 1 ORDER BY a.username ASC) AS table1 GROUP BY A, B;"
     result = cursor.execute(query)
     result = cursor.fetchall()
